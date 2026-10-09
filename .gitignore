@@ -1,0 +1,27 @@
+# build output
+dist/
+.astro/
+.wrangler/
+
+# dependencies
+node_modules/
+
+# test output
+test-results/
+playwright-report/
+coverage/
+
+# environment and secrets (never commit)
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# resume source files stay off the public repository (only scrubbed PDFs in public/resume)
+resume-src/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json

@@ -1,0 +1,354 @@
+/* Page-level layouts: inner pages, case study, resume, security, 404. */
+
+.page {
+  padding-top: var(--space-8);
+}
+
+.page--narrow {
+  max-width: calc(52rem + 2 * var(--margin));
+}
+
+.page__title {
+  font-size: var(--step-4);
+}
+
+.page__intro {
+  margin-top: var(--space-4);
+  max-width: 62ch;
+  font-size: var(--step-1);
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.page__section {
+  margin-top: var(--space-8);
+}
+
+.page__subtitle {
+  margin-bottom: var(--space-4);
+  font-size: var(--step-2);
+}
+
+.page__text {
+  max-width: 62ch;
+  color: var(--text-2);
+}
+
+/* Breadcrumb */
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  list-style: none;
+  font-size: var(--step--1);
+  color: var(--text-3);
+}
+
+.breadcrumb li + li::before {
+  content: "/";
+  margin-right: var(--space-2);
+  color: var(--text-3);
+}
+
+.breadcrumb a {
+  color: var(--text-2);
+}
+
+/* Case study */
+.case {
+  max-width: calc(52rem + 2 * var(--margin));
+  padding-top: var(--space-7);
+}
+
+.case__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.case__date {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text-3);
+}
+
+.case__title {
+  margin-top: var(--space-4);
+  font-size: var(--step-4);
+}
+
+.case__summary {
+  margin-top: var(--space-4);
+  font-size: var(--step-1);
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.case__facts {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+  padding-block: var(--space-5);
+  border-block: 1px solid var(--hairline);
+}
+
+@media (width >= 48rem) {
+  .case__facts > div {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+.case__facts dt {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.case__list,
+.case__steps,
+.case__links {
+  padding-left: 1.2em;
+}
+
+.case__steps li + li,
+.case__list li + li {
+  margin-top: var(--space-2);
+}
+
+.case__links {
+  list-style: none;
+  padding-left: 0;
+}
+
+.case__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  min-height: 2rem;
+}
+
+.case__section {
+  margin-top: var(--space-7);
+}
+
+.case__section h2 {
+  margin-bottom: var(--space-3);
+  font-size: var(--step-2);
+}
+
+.case__section p,
+.case__section li {
+  max-width: 62ch;
+  color: var(--text-2);
+}
+
+.prose:empty {
+  display: none;
+}
+
+.prose {
+  margin-top: var(--space-7);
+  max-width: 62ch;
+  color: var(--text-2);
+}
+
+.prose > * + * {
+  margin-top: var(--space-4);
+}
+
+.case__pager {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--hairline);
+}
+
+@media (width >= 48rem) {
+  .case__pager {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.case__pager-link {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: 1px solid var(--hairline);
+  text-decoration: none;
+}
+
+.case__pager-link:hover {
+  border-color: var(--boundary);
+}
+
+.case__pager-link--next {
+  text-align: right;
+  grid-column: 2;
+}
+
+@media (width < 48rem) {
+  .case__pager-link--next {
+    grid-column: auto;
+  }
+}
+
+.case__pager-dir {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* Resume */
+.resume {
+  max-width: calc(52rem + 2 * var(--margin));
+  padding-top: var(--space-7);
+}
+
+.resume__name {
+  font-size: var(--step-4);
+}
+
+.resume__role {
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.resume__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin-top: var(--space-4);
+  color: var(--text-2);
+}
+
+.resume__downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.resume__section {
+  margin-top: var(--space-7);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--hairline);
+}
+
+.resume__section h2 {
+  margin-bottom: var(--space-4);
+  font-size: var(--step-2);
+}
+
+.resume__section > p {
+  max-width: 68ch;
+  color: var(--text-2);
+}
+
+.resume__skills {
+  display: grid;
+  gap: var(--space-3);
+}
+
+@media (width >= 48rem) {
+  .resume__skills > div {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+.resume__skills dt {
+  font-weight: 600;
+}
+
+.resume__skills dd {
+  color: var(--text-2);
+}
+
+.resume__item + .resume__item {
+  margin-top: var(--space-5);
+}
+
+.resume__item-title {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-4);
+  font-weight: 600;
+}
+
+.resume__item-date {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+.resume__item-meta {
+  color: var(--text-2);
+}
+
+.resume__item ul,
+.resume__list {
+  margin-top: var(--space-2);
+  padding-left: 1.2em;
+  color: var(--text-2);
+}
+
+.resume__list li + li {
+  margin-top: var(--space-1);
+}
+
+.resume__list .resume__item-date {
+  margin-left: var(--space-2);
+}
+
+/* Security controls */
+.controls {
+  margin-top: var(--space-7);
+  border-top: 1px solid var(--hairline);
+}
+
+.controls__row {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--hairline);
+}
+
+@media (width >= 48rem) {
+  .controls__row {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+.controls dt {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+}
+
+.controls dd {
+  color: var(--text-2);
+}
+
+/* 404 */
+.not-found__code {
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+}

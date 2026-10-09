@@ -1,0 +1,39 @@
+---
+/** Editorial list of projects (deliberately not a card grid). */
+import type { Project } from '../lib/content';
+import RoleTag from './RoleTag.astro';
+
+interface Props {
+  projects: Project[];
+  headingLevel?: 'h3' | 'h2';
+}
+const { projects, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<ol class="project-list">
+  {
+    projects.map((p) => {
+      const ordered = [...p.data.roles].sort((a, b) => Number(a.weight !== 'primary') - Number(b.weight !== 'primary'));
+      return (
+        <li class="project-row" data-draft={p.data.draft ? 'true' : undefined}>
+          <p class="project-row__meta">
+            <span class="project-row__ref">{p.data.ref}</span>
+            {ordered.map((r) => (
+              <RoleTag role={r.role} weight={r.weight} />
+            ))}
+            {p.data.draft && <span class="draft-badge">Placeholder</span>}
+          </p>
+          <Heading class="project-row__title">
+            <a href={`/projects/${p.id}/`}>{p.data.title}</a>
+          </Heading>
+          <p class="project-row__summary">{p.data.summary}</p>
+          <p class="project-row__tools">
+            <span class="visually-hidden">Tools: </span>
+            {p.data.tools.join(' · ')}
+          </p>
+        </li>
+      );
+    })
+  }
+</ol>

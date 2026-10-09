@@ -1,0 +1,40 @@
+---
+/**
+ * Direct contact channels. No phone number, by design.
+ * The copy button is hidden until scripts/copy.ts confirms the Clipboard API.
+ */
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+
+const { linkedin } = site.links;
+---
+
+<div class="contact-channels">
+  <p class="contact-channels__lead">Email is the fastest way to reach me.</p>
+  <div class="contact-channels__row">
+    <a class="button button--primary" href={`mailto:${site.email}`}>
+      <Icon name="mail" />
+      <span>{site.email}</span>
+    </a>
+    <button class="button button--secondary" type="button" data-copy={site.email} hidden>
+      <Icon name="copy" />
+      <span data-copy-label>Copy address</span>
+    </button>
+    {
+      linkedin && (
+        <a class="button button--secondary" href={linkedin}>
+          LinkedIn
+          <Icon name="arrow-up-right" size={16} />
+        </a>
+      )
+    }
+  </div>
+  <p class="contact-channels__status" role="status" data-copy-status></p>
+  <p class="contact-channels__meta">
+    {site.availability}: {site.rolesOpenTo}. Based in {site.location}.
+  </p>
+</div>
+
+<script>
+  import '../scripts/copy';
+</script>

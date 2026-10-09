@@ -1,0 +1,403 @@
+/*
+ * Zero-trust figure (static SVG tier). All visual state comes from data
+ * attributes on <figure>: data-active (channel) and data-beat (story step).
+ * Only colour and opacity change, never position, so there is no motion.
+ */
+
+.fig {
+  margin: 0;
+}
+
+.fig__stage {
+  position: relative;
+}
+
+.fig-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.fig-svg--tall {
+  display: none;
+}
+
+@media (width < 40rem) {
+  .fig-svg--wide {
+    display: none;
+  }
+
+  .fig-svg--tall {
+    display: block;
+    max-width: 26rem;
+    margin-inline: auto;
+  }
+}
+
+/* Channel colours for glyphs and highlights */
+.fig-node[data-channel="policy"],
+.fig-edge[data-channel="policy"],
+.fig-legend__button[data-channel="policy"],
+.fig-legend__content[data-channel="policy"] {
+  --ch: var(--grc);
+}
+
+.fig-node[data-channel="identity"],
+.fig-edge[data-channel="identity"],
+.fig-legend__button[data-channel="identity"],
+.fig-legend__content[data-channel="identity"] {
+  --ch: var(--iam);
+}
+
+.fig-node[data-channel="activity"],
+.fig-edge[data-channel="activity"],
+.fig-legend__button[data-channel="activity"],
+.fig-legend__content[data-channel="activity"] {
+  --ch: var(--soc);
+}
+
+/* Planes */
+.fig-frame {
+  fill: var(--surface);
+  stroke: var(--hairline);
+  stroke-width: 1;
+}
+
+.fig-divider {
+  stroke: var(--boundary);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+  opacity: 0.6;
+}
+
+.fig-pdp {
+  fill: var(--surface-raised);
+  stroke: var(--hairline);
+  stroke-width: 1;
+}
+
+.fig-plane-label {
+  fill: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fig-svg--tall .fig-plane-label {
+  font-size: 10px;
+}
+
+/* Edges */
+.fig-edge {
+  fill: none;
+  stroke: var(--boundary);
+  stroke-width: 1.25;
+  opacity: 0.75;
+  transition:
+    stroke var(--dur-3) var(--ease),
+    opacity var(--dur-3) var(--ease);
+}
+
+.fig-edge[data-kind="request"] {
+  stroke: var(--text-3);
+}
+
+.fig-edge[data-kind="control"] {
+  stroke-dasharray: 3 4;
+}
+
+.fig-arrowhead {
+  fill: var(--text-3);
+}
+
+/* Nodes */
+.fig-node {
+  transition: opacity var(--dur-3) var(--ease);
+}
+
+.fig-node__box {
+  fill: var(--bg);
+  stroke: var(--boundary);
+  stroke-width: 1.25;
+  transition:
+    stroke var(--dur-3) var(--ease),
+    fill var(--dur-3) var(--ease);
+}
+
+.fig-node[data-kind="engine"] .fig-node__box,
+.fig-node[data-kind="administrator"] .fig-node__box {
+  fill: var(--surface);
+}
+
+.fig-node[data-kind="pep"] .fig-node__box {
+  stroke: var(--text-2);
+}
+
+.fig-node__label {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.fig-svg--tall .fig-node__label {
+  font-size: 13px;
+}
+
+.fig-glyph {
+  fill: var(--ch);
+}
+
+/* Channel emphasis (data-active): dim the other inputs, light the channel. */
+.fig:not([data-active="none"]) .fig-node[data-kind="input"],
+.fig:not([data-active="none"]) .fig-edge[data-kind="signal"] {
+  opacity: 0.35;
+}
+
+.fig[data-active="policy"] [data-channel="policy"],
+.fig[data-active="identity"] [data-channel="identity"],
+.fig[data-active="activity"] [data-channel="activity"] {
+  opacity: 1;
+}
+
+.fig[data-active="policy"] .fig-node[data-channel="policy"] .fig-node__box,
+.fig[data-active="identity"] .fig-node[data-channel="identity"] .fig-node__box,
+.fig[data-active="activity"] .fig-node[data-channel="activity"] .fig-node__box {
+  stroke: var(--ch);
+  stroke-width: 2;
+}
+
+.fig[data-active="policy"] .fig-edge[data-channel="policy"],
+.fig[data-active="identity"] .fig-edge[data-channel="identity"],
+.fig[data-active="activity"] .fig-edge[data-channel="activity"] {
+  stroke: var(--ch);
+}
+
+.fig:not([data-active="none"]) .fig-node[data-node="engine"] .fig-node__box {
+  stroke: var(--text);
+}
+
+/* Story beats */
+/* 1: the request reaches the enforcement point and waits. */
+.fig[data-beat="1"] .fig-edge[data-from="subject"],
+.fig[data-beat="1"] .fig-edge[data-from="system"] {
+  stroke: var(--text);
+  opacity: 1;
+}
+
+.fig[data-beat="1"] .fig-node[data-node="pep"] .fig-node__box,
+.fig[data-beat="1"] .fig-node[data-node="subject"] .fig-node__box {
+  stroke: var(--text);
+}
+
+/* 5: decision made; administrator opens the path to the resource. */
+.fig[data-beat="5"] .fig-edge[data-kind="control"],
+.fig[data-beat="5"] .fig-edge[data-kind="request"] {
+  stroke: var(--text);
+  opacity: 1;
+}
+
+.fig[data-beat="5"] .fig-node[data-node="engine"] .fig-node__box,
+.fig[data-beat="5"] .fig-node[data-node="administrator"] .fig-node__box,
+.fig[data-beat="5"] .fig-node[data-node="pep"] .fig-node__box,
+.fig[data-beat="5"] .fig-node[data-node="resource"] .fig-node__box {
+  stroke: var(--text);
+  stroke-width: 2;
+}
+
+/* 6: new activity looks wrong; the session is re-evaluated and closed. */
+.fig[data-beat="6"] .fig-node[data-node="siem"] .fig-node__box {
+  stroke: var(--soc);
+  stroke-width: 2;
+}
+
+.fig[data-beat="6"] .fig-node[data-node="pep"] .fig-node__box {
+  stroke: var(--deny);
+  stroke-width: 2;
+}
+
+.fig[data-beat="6"] .fig-edge[data-from="pep"] {
+  stroke: var(--deny);
+  stroke-dasharray: 2 5;
+  opacity: 1;
+}
+
+/* Caption, motion toggle and legend */
+.fig__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-3);
+  font-size: var(--step--1);
+  color: var(--text-3);
+}
+
+.fig__text {
+  max-width: 62ch;
+}
+
+.fig__num {
+  margin-right: 0.35em;
+  font-family: var(--font-mono);
+  color: var(--text-2);
+}
+
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-height: 2rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--boundary);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.motion-toggle:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+.fig-legend {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  list-style: none;
+}
+
+@media (width >= 64rem) {
+  .fig-legend {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.fig-legend__content,
+.fig-legend__button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-2);
+  font-size: var(--step--1);
+  line-height: 1.4;
+  text-align: left;
+}
+
+.fig-legend__button {
+  cursor: pointer;
+  transition:
+    border-color var(--dur-1) var(--ease),
+    background-color var(--dur-1) var(--ease);
+}
+
+.fig-legend__button:hover {
+  border-color: var(--boundary);
+}
+
+.fig-legend__button[aria-pressed="true"] {
+  border-color: var(--ch);
+  background: var(--surface);
+}
+
+.fig-legend__glyph {
+  grid-row: span 3;
+  width: 12px;
+  height: 12px;
+  margin-top: 0.3em;
+  fill: var(--ch);
+}
+
+.fig-legend__name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.fig-legend__role {
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+.fig-legend__inputs {
+  color: var(--text-3);
+}
+
+/* 3D tier (v1.1): canvas over the SVG poster. */
+.fig__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease);
+}
+
+.fig[data-tier="3d"] .fig__canvas {
+  opacity: 1;
+}
+
+.fig[data-tier="3d"] .fig-svg {
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease);
+}
+
+.fig__labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fig__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  color: var(--text);
+  text-align: center;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.fig__label-glyph {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.35em;
+  vertical-align: 0.05em;
+  background: var(--ch);
+}
+
+.fig__label[data-channel="policy"] {
+  --ch: var(--grc);
+}
+
+.fig__label[data-channel="identity"] {
+  --ch: var(--iam);
+}
+
+.fig__label[data-channel="identity"] .fig__label-glyph {
+  border-radius: 50%;
+}
+
+.fig__label[data-channel="activity"] {
+  --ch: var(--soc);
+}
+
+.fig__label[data-channel="activity"] .fig__label-glyph {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.fig[data-tier="static"] .fig__labels {
+  display: none;
+}

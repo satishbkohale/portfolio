@@ -1,0 +1,13 @@
+---
+/** Role pages: /grc/, /iam/, /soc/. Same content, role-first ordering and copy. */
+import HomePage from '../components/HomePage.astro';
+import { ROLE_IDS, type RoleId } from '../data/roles';
+
+export function getStaticPaths() {
+  return ROLE_IDS.map((role) => ({ params: { role } }));
+}
+
+const role = Astro.params.role as RoleId;
+---
+
+<HomePage role={role} />

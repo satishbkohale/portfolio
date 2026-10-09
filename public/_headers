@@ -1,0 +1,20 @@
+# Security and cache headers for Cloudflare Workers static assets.
+# Rules for every path a request matches are merged, and duplicate header
+# names are joined with commas, so each header is set in exactly one rule.
+# Two comma-joined CSPs would be two policies, both enforced. A route that
+# needs a different CSP must remove it first: "! Content-Security-Policy".
+# See docs/01-phase-1-plan.md section 8 and docs/01b-technical-notes.md.
+
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types 'none'
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), midi=(), magnetometer=(), gyroscope=(), accelerometer=(), display-capture=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  X-Frame-Options: DENY
+
+# Hashed build assets never change, so they can be cached for a year.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

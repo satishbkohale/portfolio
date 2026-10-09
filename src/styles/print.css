@@ -1,0 +1,46 @@
+/* Print: a clean black-on-white document, mainly for the resume page. */
+@media print {
+  :root {
+    --bg: #fff;
+    --surface: #fff;
+    --surface-raised: #fff;
+    --text: #000;
+    --text-2: #1a1a1a;
+    --text-3: #444;
+    --hairline: #ccc;
+    --boundary: #888;
+  }
+
+  body {
+    font-size: 10.5pt;
+  }
+
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .lens,
+  .hero__figure,
+  .story__figure,
+  .dev-note,
+  .resume__downloads,
+  .breadcrumb,
+  .case__pager,
+  button {
+    display: none !important;
+  }
+
+  .page,
+  .resume,
+  .case {
+    padding-top: 0;
+  }
+
+  .resume__section {
+    margin-top: 1.2rem;
+    break-inside: avoid;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}

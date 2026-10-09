@@ -1,0 +1,80 @@
+/*
+ * Design tokens. Single source of truth for colour, type, space and motion.
+ * Contrast ratios (WCAG 2.x) are measured against --bg unless noted;
+ * see docs/01-phase-1-plan.md section 4.2.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #0d1114;
+  --surface: #141a1e;
+  --surface-raised: #1c2429;
+  --hairline: #2a333a; /* decorative rules only */
+  --boundary: #6b7882; /* component borders: 4.18:1 (3.47:1 on raised) */
+
+  /* Text */
+  --text: #e8e4dc; /* 14.96:1 */
+  --text-2: #b4babe; /* 9.67:1 */
+  --text-3: #919aa1; /* 6.63:1, 5.50:1 on raised */
+  --on-light: #0d1114; /* text on light fills */
+
+  /* Role channels: identify roles only, never status */
+  --grc: #b5d6ae; /* policy, 11.91:1 */
+  --iam: #7ba4db; /* identity, 7.38:1 */
+  --soc: #e6ae5e; /* activity, 9.55:1 */
+
+  /* Status */
+  --deny: #f2a193; /* errors and deny state, 9.30:1 */
+
+  /* Type families (fallback faces in fonts.css limit layout shift) */
+  --font-display: "Newsreader Variable", "Newsreader Fallback", Georgia, serif;
+  --font-body: "Atkinson Hyperlegible Next Variable", "Atkinson Next Fallback", Arial, sans-serif;
+  --font-mono: "Atkinson Hyperlegible Mono Variable", "Atkinson Mono Fallback", "Courier New", monospace;
+
+  /* Fluid type scale: ~1.2 ratio at 320px rising to ~1.333 at 1280px */
+  --step--1: clamp(0.8125rem, 0.79rem + 0.11vw, 0.875rem);
+  --step-0: clamp(1.0625rem, 1.04rem + 0.11vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.18rem + 0.33vw, 1.5rem);
+  --step-2: clamp(1.5rem, 1.37rem + 0.65vw, 2rem);
+  --step-3: clamp(1.8rem, 1.56rem + 1.2vw, 2.67rem);
+  --step-4: clamp(2.16rem, 1.75rem + 2.05vw, 3.55rem);
+  --step-5: clamp(2.6rem, 1.9rem + 3.4vw, 4.6rem);
+
+  --leading-tight: 1.15;
+  --leading-body: 1.6;
+  --measure: 68ch;
+
+  /* Spacing scale, 4px base */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* Layout */
+  --max-width: 75rem;
+  --gutter: 1.5rem;
+  --margin: clamp(1rem, 5vw, 4rem);
+  --section-gap: var(--space-9);
+  --header-h: 3.75rem;
+  --radius: 2px;
+
+  /* Motion */
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (width < 48rem) {
+  :root {
+    --gutter: 1rem;
+    --section-gap: var(--space-8);
+  }
+}

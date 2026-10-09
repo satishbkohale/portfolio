@@ -1,0 +1,59 @@
+---
+/** Experience (if any) and education as a compact timeline. */
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  experience: CollectionEntry<'experience'>[];
+  education: CollectionEntry<'education'>[];
+}
+const { experience, education } = Astro.props;
+---
+
+<div class="timeline-groups">
+  {
+    experience.length > 0 && (
+      <section class="timeline-group" aria-labelledby="experience-title">
+        <h3 class="timeline-group__title" id="experience-title">
+          Experience
+        </h3>
+        <ol class="timeline">
+          {experience.map((e) => (
+            <li class="timeline__item" data-draft={e.data.draft ? 'true' : undefined}>
+              <p class="timeline__period">{e.data.period}</p>
+              <div class="timeline__body">
+                <p class="timeline__title">
+                  {e.data.role}, {e.data.organisation}
+                  {e.data.draft && <span class="draft-badge">Placeholder</span>}
+                </p>
+                <ul class="timeline__points">
+                  {e.data.points.map((pt) => (
+                    <li>{pt}</li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
+  <section class="timeline-group" aria-labelledby="education-list-title">
+    <h3 class="timeline-group__title" id="education-list-title">Education</h3>
+    <ol class="timeline">
+      {
+        education.map((e) => (
+          <li class="timeline__item">
+            <p class="timeline__period">{e.data.period}</p>
+            <div class="timeline__body">
+              <p class="timeline__title">{e.data.qualification}</p>
+              <p class="timeline__meta">
+                {e.data.institution}, {e.data.location}
+              </p>
+              {e.data.detail && <p class="timeline__meta">{e.data.detail}</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</div>

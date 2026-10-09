@@ -1,0 +1,44 @@
+---
+import CoverageTable from '../../components/CoverageTable.astro';
+import ProjectList from '../../components/ProjectList.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ROLE_IDS, roles } from '../../data/roles';
+import { getProjects, primaryRole } from '../../lib/content';
+
+const projects = await getProjects();
+const groups = ROLE_IDS.map((r) => ({ role: roles[r], items: projects.filter((p) => primaryRole(p) === r) })).filter(
+  (g) => g.items.length > 0,
+);
+---
+
+<BaseLayout
+  title="Projects and labs"
+  description="All projects and labs by Satish Kohale, grouped by role: governance, risk and compliance, identity and access management, and security operations."
+>
+  <div class="container page">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span aria-current="page">Projects</span></li>
+      </ol>
+    </nav>
+    <h1 class="page__title">Projects and labs</h1>
+    <p class="page__intro">Grouped by the role each project mainly supports. Many projects support more than one role; the table at the end shows the overlap.</p>
+
+    {
+      groups.map((g) => (
+        <section class="page__section" aria-labelledby={`group-${g.role.id}`}>
+          <h2 class="page__subtitle" id={`group-${g.role.id}`}>
+            {g.role.name} ({g.role.short})
+          </h2>
+          <ProjectList projects={g.items} />
+        </section>
+      ))
+    }
+
+    <section class="page__section" aria-labelledby="overlap">
+      <h2 class="page__subtitle" id="overlap">Overlap between roles</h2>
+      <CoverageTable projects={projects} />
+    </section>
+  </div>
+</BaseLayout>

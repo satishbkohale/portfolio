@@ -1,0 +1,140 @@
+---
+/** Case study page: context, problem, approach, tools, outcome, frameworks, links. */
+import { render } from 'astro:content';
+import Icon from '../../components/Icon.astro';
+import RoleTag from '../../components/RoleTag.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProjects, type Project } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, prev: projects[i - 1], next: projects[i + 1] },
+  }));
+}
+
+interface Props {
+  project: Project;
+  prev?: Project | undefined;
+  next?: Project | undefined;
+}
+
+const { project, prev, next } = Astro.props;
+const d = project.data;
+const { Content } = await render(project);
+const ordered = [...d.roles].sort((a, b) => Number(a.weight !== 'primary') - Number(b.weight !== 'primary'));
+---
+
+<BaseLayout title={d.title} description={d.description} ogType="article" todo={d.todo}>
+  <article class="case container" data-draft={d.draft ? 'true' : undefined}>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/projects/">Projects</a></li>
+        <li><span aria-current="page">{d.title}</span></li>
+      </ol>
+    </nav>
+
+    <header class="case__header">
+      <p class="case__meta">
+        <span class="project-row__ref">{d.ref}</span>
+        {ordered.map((r) => <RoleTag role={r.role} weight={r.weight} />)}
+        {d.date && <span class="case__date">{d.date}</span>}
+        {d.draft && <span class="draft-badge">Placeholder</span>}
+      </p>
+      <h1 class="case__title">{d.title}</h1>
+      <p class="case__summary">{d.summary}</p>
+    </header>
+
+    <dl class="case__facts">
+      <div>
+        <dt>Context</dt>
+        <dd>{d.context}</dd>
+      </div>
+      <div>
+        <dt>Tools</dt>
+        <dd>{d.tools.join(', ')}</dd>
+      </div>
+      {
+        d.frameworks.length > 0 && (
+          <div>
+            <dt>Frameworks mapped</dt>
+            <dd>
+              <ul class="case__list">
+                {d.frameworks.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        )
+      }
+    </dl>
+
+    <section class="case__section" aria-labelledby="problem">
+      <h2 id="problem">Problem</h2>
+      <p>{d.problem}</p>
+    </section>
+
+    <section class="case__section" aria-labelledby="approach">
+      <h2 id="approach">Approach</h2>
+      <ol class="case__steps">
+        {d.approach.map((step) => <li>{step}</li>)}
+      </ol>
+    </section>
+
+    <section class="case__section" aria-labelledby="outcome">
+      <h2 id="outcome">Outcome</h2>
+      <p>{d.outcome}</p>
+    </section>
+
+    {
+      d.next && (
+        <section class="case__section" aria-labelledby="next">
+          <h2 id="next">What I would do next</h2>
+          <p>{d.next}</p>
+        </section>
+      )
+    }
+
+    {
+      d.links.length > 0 && (
+        <section class="case__section" aria-labelledby="links">
+          <h2 id="links">Links</h2>
+          <ul class="case__links">
+            {d.links.map((l) => (
+              <li>
+                <a href={l.href}>
+                  {l.label}
+                  <Icon name="arrow-up-right" size={16} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <div class="prose"><Content /></div>
+
+    <nav class="case__pager" aria-label="More projects">
+      {
+        prev && (
+          <a class="case__pager-link" href={`/projects/${prev.id}/`}>
+            <span class="case__pager-dir">Previous</span>
+            <span>{prev.data.title}</span>
+          </a>
+        )
+      }
+      {
+        next && (
+          <a class="case__pager-link case__pager-link--next" href={`/projects/${next.id}/`}>
+            <span class="case__pager-dir">Next</span>
+            <span>{next.data.title}</span>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</BaseLayout>

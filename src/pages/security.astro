@@ -1,0 +1,64 @@
+---
+/**
+ * "How this site is secured". Every statement here must stay true; if a
+ * control changes, update this page in the same change.
+ * TODO(satish): rewrite in your own words so you can defend it in interviews.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="How this site is secured"
+  description="How this portfolio is built and secured: a strict content security policy, no tracking, dependency controls and published contact details, grouped by NIST CSF 2.0."
+  todo={['Rewrite this page in your own words (plan section 3.6).', 'Add the Mozilla HTTP Observatory grade and scan date after deploying.']}
+>
+  <div class="container page page--narrow">
+    <h1 class="page__title">How this site is secured</h1>
+    <p class="page__intro">
+      This is a small static site, so the risks are small too: someone tampering with the content, a compromised dependency, or personal data
+      being exposed. These are the controls in place, grouped by the six functions of the NIST Cybersecurity Framework 2.0.
+    </p>
+
+    <dl class="controls">
+      <div class="controls__row">
+        <dt>Govern</dt>
+        <dd>
+          Decisions are written down in the project's docs folder. New package versions are installed only after they have been public for 7
+          days, and packages cannot run install scripts unless reviewed. Exceptions are pinned to one version and explained.
+        </dd>
+      </div>
+      <div class="controls__row">
+        <dt>Identify</dt>
+        <dd>
+          The assets are the site content, the contact channel and the accounts that publish the site. The site stores no visitor data and
+          handles no logins.
+        </dd>
+      </div>
+      <div class="controls__row">
+        <dt>Protect</dt>
+        <dd>
+          A strict Content Security Policy allows scripts and styles only from this site (<code>script-src 'self'</code>, no inline code), and
+          Trusted Types blocks unsafe DOM writes. Other headers enforce HTTPS, stop the site being framed, and turn off unused browser features.
+          No cookies, analytics or third-party scripts. No phone number or street address is published.
+        </dd>
+      </div>
+      <div class="controls__row">
+        <dt>Detect</dt>
+        <dd>
+          Every build is checked automatically for inline code, placeholder text and oversized files, and fails if it finds any. Dependencies are
+          audited for known vulnerabilities before release.
+        </dd>
+      </div>
+      <div class="controls__row">
+        <dt>Respond</dt>
+        <dd>
+          Security contact details are published in <a href="/.well-known/security.txt">security.txt</a> (RFC 9116).
+        </dd>
+      </div>
+      <div class="controls__row">
+        <dt>Recover</dt>
+        <dd>The site is rebuilt from source control in minutes and holds no data that could be lost.</dd>
+      </div>
+    </dl>
+  </div>
+</BaseLayout>

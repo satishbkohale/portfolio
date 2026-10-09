@@ -1,0 +1,156 @@
+---
+/**
+ * HTML resume: accessible, indexable and printable (print styles hide the
+ * site chrome). PDF download buttons appear once scrubbed PDFs are added in
+ * src/data/site.ts (resumePdf). The public resume never includes a phone number.
+ */
+import Icon from '../components/Icon.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ROLE_IDS, roles } from '../data/roles';
+import { site } from '../data/site';
+import { bands, skills } from '../data/skills';
+import { getCertifications, getEducation, getExperience, getProjects } from '../lib/content';
+
+const projects = await getProjects();
+const certs = (await getCertifications()).filter((c) => c.data.status === 'earned');
+const education = await getEducation();
+const experience = await getExperience();
+
+const pdfs = [
+  { key: 'general', label: 'Resume (PDF)', href: site.resumePdf.general },
+  ...ROLE_IDS.map((r) => ({ key: r, label: `${roles[r].short} resume (PDF)`, href: site.resumePdf[r] })),
+].filter((p): p is { key: string; label: string; href: string } => Boolean(p.href));
+
+const { linkedin, github, hackerrank } = site.links;
+---
+
+<BaseLayout
+  title="Resume"
+  description="Resume of Satish Kohale: final-year computer science student seeking entry-level GRC, IAM and SOC L1 roles. Skills, projects, certifications and education."
+  todo={pdfs.length === 0 ? ['Add scrubbed resume PDFs (no phone number) to public/resume/ and set site.resumePdf in src/data/site.ts.'] : []}
+>
+  <article class="resume container">
+    <header class="resume__header">
+      <h1 class="resume__name">{site.name}</h1>
+      <p class="resume__role">{site.roleLine}</p>
+      <p class="resume__contact">
+        <span>{site.location}</span>
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+        {linkedin && <a href={linkedin}>LinkedIn</a>}
+        {github && <a href={github}>GitHub</a>}
+        {hackerrank && <a href={hackerrank}>HackerRank</a>}
+      </p>
+      {
+        pdfs.length > 0 && (
+          <div class="resume__downloads">
+            {pdfs.map((p) => (
+              <a class="button button--secondary button--small" href={p.href} download>
+                <Icon name="download" size={16} />
+                <span>{p.label}</span>
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <section class="resume__section" aria-labelledby="r-summary">
+      <h2 id="r-summary">Summary</h2>
+      <p>
+        Final-year Computer Science and Engineering undergraduate with the Google Cybersecurity Professional Certificate and hands-on experience
+        building security automation, including a phishing simulation platform. Grounded in SOC fundamentals (MITRE ATT&amp;CK, Cyber Kill Chain),
+        GRC frameworks (NIST, ISO/IEC 27001), the OWASP Top 10, Active Directory and LDAP, Windows, Linux and networking. Completed CyberArk
+        University's introductions to privileged access management and identity security.
+      </p>
+    </section>
+
+    <section class="resume__section" aria-labelledby="r-skills">
+      <h2 id="r-skills">Skills</h2>
+      <dl class="resume__skills">
+        {
+          bands.map((b) => (
+            <div>
+              <dt>{b.title}</dt>
+              <dd>
+                {skills
+                  .filter((s) => s.band === b.id)
+                  .map((s) => s.name)
+                  .join('; ')}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    {
+      experience.length > 0 && (
+        <section class="resume__section" aria-labelledby="r-experience">
+          <h2 id="r-experience">Experience</h2>
+          {experience.map((e) => (
+            <div class="resume__item">
+              <p class="resume__item-title">
+                {e.data.role}, {e.data.organisation} <span class="resume__item-date">{e.data.period}</span>
+              </p>
+              <ul>
+                {e.data.points.map((pt) => (
+                  <li>{pt}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+      )
+    }
+
+    <section class="resume__section" aria-labelledby="r-projects">
+      <h2 id="r-projects">Projects</h2>
+      {
+        projects.map((p) => (
+          <div class="resume__item">
+            <p class="resume__item-title">
+              <a href={`/projects/${p.id}/`}>{p.data.title}</a>
+              <span class="resume__item-date">{p.data.tools.join(', ')}</span>
+            </p>
+            <ul>
+              {p.data.approach.map((a) => (
+                <li>{a}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="resume__section" aria-labelledby="r-certs">
+      <h2 id="r-certs">Certifications</h2>
+      <ul class="resume__list">
+        {
+          certs.map((c) => (
+            <li>
+              {c.data.name}
+              {(c.data.issuer || c.data.date) && <span class="resume__item-date">{[c.data.issuer, c.data.date].filter(Boolean).join(', ')}</span>}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="resume__section" aria-labelledby="r-education">
+      <h2 id="r-education">Education</h2>
+      {
+        education.map((e) => (
+          <div class="resume__item">
+            <p class="resume__item-title">
+              {e.data.qualification} <span class="resume__item-date">{e.data.period}</span>
+            </p>
+            <p class="resume__item-meta">
+              {e.data.institution}, {e.data.location}
+              {e.data.detail ? `. ${e.data.detail}` : ''}
+            </p>
+          </div>
+        ))
+      }
+    </section>
+  </article>
+</BaseLayout>

@@ -1,0 +1,58 @@
+---
+/** Side-by-side view: which roles each project covers. Text plus shape, never colour alone. */
+import { ROLE_IDS, type RoleId, roles } from '../data/roles';
+import { type Project, roleWeight } from '../lib/content';
+
+interface Props {
+  projects: Project[];
+  highlight?: RoleId | undefined;
+}
+const { projects, highlight } = Astro.props;
+---
+
+<div class="table-scroll" role="region" aria-labelledby="coverage-caption" tabindex="0">
+  <table class="coverage" data-highlight={highlight ?? 'none'}>
+    <caption id="coverage-caption">Role coverage by project</caption>
+    <thead>
+      <tr>
+        <th scope="col">Project</th>
+        {
+          ROLE_IDS.map((r) => (
+            <th scope="col" data-role={r}>
+              {roles[r].short}
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody>
+      {
+        projects.map((p) => (
+          <tr>
+            <th scope="row">
+              <a href={`/projects/${p.id}/`}>{p.data.title}</a>
+            </th>
+            {ROLE_IDS.map((r) => {
+              const w = roleWeight(p, r);
+              return (
+                <td data-role={r} data-weight={w ?? 'none'}>
+                  {w ? (
+                    <span class="coverage__cell">
+                      <span class="coverage__mark" aria-hidden="true" />
+                      {w === 'primary' ? 'Primary' : 'Supporting'}
+                    </span>
+                  ) : (
+                    <span class="coverage__none">
+                      <span aria-hidden="true">–</span>
+                      <span class="visually-hidden">Not covered</span>
+                    </span>
+                  )}
+                </td>
+              );
+            })}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

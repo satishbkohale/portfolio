@@ -1,0 +1,20 @@
+---
+/**
+ * Role tag: text label plus a channel-coloured, channel-shaped mark
+ * (square = GRC, circle = IAM, triangle = SOC), so colour is never the only cue.
+ * weight: primary (filled), supporting (outlined, announced), plain (neutral).
+ */
+import { type RoleId, roles } from '../data/roles';
+
+interface Props {
+  role: RoleId;
+  weight?: 'primary' | 'supporting' | 'plain';
+}
+const { role, weight = 'plain' } = Astro.props;
+---
+
+<span class="role-tag" data-role={role} data-weight={weight}>
+  <span class="role-tag__mark" aria-hidden="true"></span>{roles[role].short}{
+    weight === 'supporting' && <span class="visually-hidden"> (supporting)</span>
+  }
+</span>

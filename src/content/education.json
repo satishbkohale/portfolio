@@ -1,0 +1,20 @@
+[
+  {
+    "id": "btech",
+    "qualification": "B.Tech, Computer Science and Engineering",
+    "institution": "Nutan College of Engineering and Research",
+    "location": "Pune, Maharashtra",
+    "period": "Final year, in progress",
+    "detail": null,
+    "order": 1
+  },
+  {
+    "id": "diploma",
+    "qualification": "Diploma in Computer Technology",
+    "institution": "Government Polytechnic, Beed",
+    "location": "Beed, Maharashtra",
+    "period": "Completed June 2024",
+    "detail": "Score: 87.14%",
+    "order": 2
+  }
+]

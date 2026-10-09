@@ -1,0 +1,42 @@
+{
+  "name": "satish-kohale-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Portfolio of Satish Kohale: entry-level security analyst (GRC, IAM, SOC).",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@12.10.1",
+  "scripts": {
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/check-dist.mjs",
+    "build:prod": "SITE_ENV=production ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/check-dist.mjs --production",
+    "preview": "node scripts/serve-dist.mjs",
+    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check && biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check:dist": "node scripts/check-dist.mjs",
+    "release": "pnpm build:prod && WRANGLER_SEND_METRICS=false wrangler deploy"
+  },
+  "dependencies": {
+    "astro": "^7.3.5",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@biomejs/biome": "^2.5.15",
+    "@fontsource-variable/atkinson-hyperlegible-mono": "^5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.4",
+    "@types/three": "^0.186.0",
+    "sharp": "^0.35.5",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3",
+    "wrangler": "^4.147.0"
+  }
+}

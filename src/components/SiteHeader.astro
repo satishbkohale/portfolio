@@ -1,0 +1,65 @@
+---
+/**
+ * Site header. The mobile menu uses the native Popover API, so it opens,
+ * closes on Escape or outside click, and returns focus without JavaScript.
+ * scripts/nav.ts only adds "close after choosing a link".
+ */
+import { nav, site } from '../data/site';
+import Icon from './Icon.astro';
+
+const path = Astro.url.pathname;
+const current = (href: string) => (href === '/contact/' && path.startsWith('/contact') ? 'page' : undefined);
+---
+
+<header class="site-header">
+  <div class="site-header__inner container">
+    <a class="wordmark" href="/">{site.name}</a>
+
+    <nav class="site-nav" aria-label="Main">
+      <ul class="site-nav__list">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={current(item.href)}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="button button--primary button--small site-header__resume" href="/resume/">Resume</a>
+
+    <button class="menu-button" type="button" popovertarget="mobile-menu" aria-label="Open menu">
+      <Icon name="menu" />
+      <span class="menu-button__text">Menu</span>
+    </button>
+  </div>
+
+  <nav id="mobile-menu" class="mobile-menu" popover aria-label="Main">
+    <div class="mobile-menu__head">
+      <span class="mobile-menu__title">Menu</span>
+      <button class="menu-button" type="button" popovertarget="mobile-menu" popovertargetaction="hide" aria-label="Close menu">
+        <Icon name="x" />
+        <span class="menu-button__text">Close</span>
+      </button>
+    </div>
+    <ul class="mobile-menu__list">
+      {
+        nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={current(item.href)}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+      <li><a href="/resume/">Resume</a></li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  import '../scripts/nav';
+</script>

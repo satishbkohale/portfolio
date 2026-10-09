@@ -1,0 +1,77 @@
+---
+/**
+ * Evidence-linked skills matrix: a real table with row and column headers.
+ * Evidence links read "P1" visibly; the accessible name adds the title.
+ */
+import type { RoleId } from '../data/roles';
+import { bands, proficiencyHelp, proficiencyLabel, type SkillBand } from '../data/skills';
+import { getSkillsWithEvidence } from '../lib/content';
+
+interface Props {
+  role?: RoleId | undefined;
+}
+const { role } = Astro.props;
+
+const rows = await getSkillsWithEvidence();
+// On a role page, that role's band comes first.
+const orderedBands = role ? [...bands].sort((a, b) => Number(a.id !== role) - Number(b.id !== role)) : bands;
+const byBand = (b: SkillBand) => rows.filter((s) => s.band === b);
+---
+
+<div class="table-scroll" role="region" aria-labelledby="skills-caption" tabindex="0">
+  <table class="skills">
+    <caption id="skills-caption">Skills with proficiency and evidence</caption>
+    <thead>
+      <tr>
+        <th scope="col">Skill</th>
+        <th scope="col">Proficiency</th>
+        <th scope="col">Evidence</th>
+      </tr>
+    </thead>
+    {
+      orderedBands.map((band) => (
+        <tbody data-band={band.id}>
+          <tr class="skills__band">
+            <th scope="rowgroup" colspan="3">
+              <span class="skills__band-title">{band.title}</span>
+              <span class="skills__band-note">{band.note}</span>
+            </th>
+          </tr>
+          {byBand(band.id).map((s) => (
+            <tr>
+              <th scope="row">{s.name}</th>
+              <td>
+                <span class="proficiency" data-level={s.proficiency}>
+                  {proficiencyLabel[s.proficiency]}
+                </span>
+              </td>
+              <td class="skills__evidence">
+                {s.links.length > 0 ? (
+                  <ul class="evidence-list">
+                    {s.links.map((l) => (
+                      <li>
+                        <a class="evidence-ref" href={l.href}>
+                          {l.ref}
+                          <span class="visually-hidden">: {l.label}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span class="skills__no-evidence">
+                    <span aria-hidden="true">–</span>
+                    <span class="visually-hidden">No linked evidence yet</span>
+                  </span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      ))
+    }
+  </table>
+</div>
+<p class="skills__key">
+  <strong>Applied</strong>: {proficiencyHelp.applied}. <strong>Practised</strong>: {proficiencyHelp.practised}.
+  <strong>Studied</strong>: {proficiencyHelp.studied}. P = project, C = certificate.
+</p>

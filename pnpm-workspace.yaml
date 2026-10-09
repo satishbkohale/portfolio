@@ -1,0 +1,48 @@
+# pnpm settings (pnpm 11+ reads non-auth settings from this file).
+# Supply-chain controls, see docs/01-phase-1-plan.md section 8.5.
+
+# Wait 7 days (in minutes) before installing a newly published version.
+# Most malicious releases are detected and pulled inside that window.
+minimumReleaseAge: 10080
+
+# Fail if a package's publishing trust level drops (e.g. provenance disappears).
+trustPolicy: no-downgrade
+
+# Only these packages may run install scripts; everything else is blocked.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
+
+# Run package scripts through pnpm's cross-platform shell so `VAR=value cmd` works on Windows.
+shellEmulator: true
+
+# Reviewed exceptions to trustPolicy. Each entry is pinned to one version and explained.
+#  - chokidar@4.0.3: same publisher (paulmillr) as the attested 4.0.1; 4.0.2/4.0.3 were
+#    published without a provenance attestation in Dec 2024. Not a takeover. Needed by
+#    @astrojs/check. Reviewed 2026-10-10.
+trustPolicyExclude:
+  - chokidar@4.0.3
+
+# Also install wasm32 builds of native packages. On this Windows machine,
+# Smart App Control blocks Astro's native compiler (.node file); Astro then
+# falls back to its WebAssembly build automatically. Other machines and CI
+# keep using the native binaries.
+supportedArchitectures:
+  os:
+    - current
+  cpu:
+    - current
+    - wasm32
+
+# Security fixes for transitive dependencies (both build-time only; nothing here ships to visitors).
+#  - sharp <0.35.5: librsvg CVE-2026-96889 (GHSA-wq5f-xc86-pv6w), via wrangler > miniflare.
+#  - http-cache-semantics <=4.2.0: GHSA-ch52-4w7c-c8xp, via astro.
+overrides:
+  sharp: 0.35.5
+  http-cache-semantics: 4.3.0
+
+# Runbook exception: a security fix released inside the 7-day window may be
+# installed early, pinned to the exact version. Reviewed 2026-10-10; remove after 2026-10-11.
+minimumReleaseAgeExclude:
+  - http-cache-semantics@4.3.0

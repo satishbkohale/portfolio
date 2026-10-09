@@ -1,0 +1,15 @@
+[
+  {
+    "id": "placeholder-experience",
+    "role": "Lorem ipsum role (placeholder)",
+    "organisation": "Placeholder organisation",
+    "period": "Lorem 2025 to Ipsum 2026",
+    "points": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    ],
+    "roles": ["soc"],
+    "order": 1,
+    "draft": true
+  }
+]

@@ -1,0 +1,29 @@
+---
+import ContactChannels from '../components/ContactChannels.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact Satish Kohale about entry-level GRC, IAM and SOC L1 roles. Email is the fastest route; no phone number is published on this site."
+>
+  <div class="container page">
+    <h1 class="page__title">Contact</h1>
+    <ContactChannels />
+
+    <section class="page__section" aria-labelledby="privacy">
+      <h2 class="page__subtitle" id="privacy">Privacy</h2>
+      <p class="page__text">
+        This site sets no cookies and runs no tracking scripts. Emails go straight to my inbox and are not stored anywhere else.
+      </p>
+    </section>
+
+    <section class="page__section" aria-labelledby="report">
+      <h2 class="page__subtitle" id="report">Reporting a security issue</h2>
+      <p class="page__text">
+        If you find a security problem with this site, please email me. The contact details are also published in
+        <a href="/.well-known/security.txt">security.txt</a>, and <a href="/security/">this page explains how the site is secured</a>.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

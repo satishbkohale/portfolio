@@ -1,0 +1,91 @@
+---
+/**
+ * Base page shell: meta tags, font preloads, header, footer.
+ * No inline scripts or styles: everything is loaded from /_astro/*.
+ * The JSON-LD block is a data block (not executed), which CSP permits.
+ */
+import '../styles/global.css';
+import monoUrl from '@fontsource-variable/atkinson-hyperlegible-mono/files/atkinson-hyperlegible-mono-latin-wght-normal.woff2?url';
+import bodyUrl from '@fontsource-variable/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-wght-normal.woff2?url';
+import displayUrl from '@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { site } from '../data/site';
+import { includeDrafts } from '../lib/content';
+
+interface Props {
+  /** Page title without the site name. Omit on the homepage. */
+  title?: string | undefined;
+  description: string;
+  ogType?: 'website' | 'profile' | 'article';
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>;
+  /** Developer notes listing missing facts; shown only in non-production builds. */
+  todo?: string[];
+}
+
+const { title, description, ogType = 'website', noindex = false, jsonLd, todo = [] } = Astro.props;
+
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | ${site.headline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og/default.png', Astro.site).href;
+// Escape "<" so data can never close the JSON-LD block early.
+const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : null;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0d1114" />
+    <meta name="author" content={site.name} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- The three upright fonts all appear above the fold. -->
+    <link rel="preload" href={displayUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bodyUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name}: ${site.headline}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {jsonLdText && <script type="application/ld+json" set:html={jsonLdText} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader />
+    <main id="main" tabindex="-1">
+      {
+        includeDrafts && todo.length > 0 && (
+          <aside class="dev-note container" aria-label="Missing details (development only)">
+            <p class="dev-note__title">Development note: details to add (hidden in production)</p>
+            <ul>
+              {todo.map((t) => (
+                <li>{t}</li>
+              ))}
+            </ul>
+          </aside>
+        )
+      }
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

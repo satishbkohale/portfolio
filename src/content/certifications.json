@@ -1,0 +1,80 @@
+[
+  {
+    "id": "C1",
+    "name": "Introduction to CyberArk Privileged Access Management",
+    "issuer": "CyberArk University",
+    "status": "earned",
+    "date": null,
+    "credentialUrl": null,
+    "roles": ["iam"],
+    "order": 1,
+    "todo": ["Add completion month and a verification link if CyberArk provides one."]
+  },
+  {
+    "id": "C2",
+    "name": "Introduction to CyberArk Identity Security",
+    "issuer": "CyberArk University",
+    "status": "earned",
+    "date": "Oct 2026",
+    "credentialUrl": null,
+    "roles": ["iam"],
+    "order": 2,
+    "todo": ["Add a verification link if available."]
+  },
+  {
+    "id": "C3",
+    "name": "Google Cybersecurity Professional Certificate",
+    "issuer": "Google (Coursera)",
+    "status": "earned",
+    "date": null,
+    "credentialUrl": null,
+    "roles": ["soc", "grc"],
+    "order": 3,
+    "todo": ["Add completion month and the Coursera or Credly verification link."]
+  },
+  {
+    "id": "C4",
+    "name": "Foundations of Cybersecurity",
+    "issuer": null,
+    "status": "earned",
+    "date": null,
+    "credentialUrl": null,
+    "roles": ["grc", "soc"],
+    "order": 4,
+    "todo": ["Add the issuer and completion month."]
+  },
+  {
+    "id": "C5",
+    "name": "Introduction to Cybersecurity",
+    "issuer": null,
+    "status": "earned",
+    "date": null,
+    "credentialUrl": null,
+    "roles": ["grc", "iam", "soc"],
+    "order": 5,
+    "todo": ["Add the issuer (for example Cisco Networking Academy) and completion month."]
+  },
+  {
+    "id": "C6",
+    "name": "IBM Machine Learning Professional Certificate",
+    "issuer": "IBM (Coursera)",
+    "status": "earned",
+    "date": null,
+    "credentialUrl": null,
+    "roles": ["soc"],
+    "order": 6,
+    "todo": ["Add completion month and verification link."]
+  },
+  {
+    "id": "C7",
+    "name": "Lorem ipsum certification (placeholder)",
+    "issuer": "Placeholder issuer",
+    "status": "planned",
+    "date": "Lorem 2027",
+    "credentialUrl": null,
+    "roles": ["soc"],
+    "order": 7,
+    "draft": true,
+    "todo": ["Replace with a real planned certification and target month, or delete."]
+  }
+]
