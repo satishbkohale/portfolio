@@ -1,0 +1,35 @@
+---
+/**
+ * SOC poster: the 2D picture of the "Detect" scene in its final pose (log
+ * stream above, the escalated incident card below). Shown before 3D starts,
+ * without WebGL, and in the switcher peek. Decorative; the page text tells
+ * the same story. Sample data only.
+ */
+const events = [8, 15, 23, 31, 44, 52, 61, 69, 77, 86, 92];
+---
+
+<svg class="poster poster--soc" viewBox="0 0 100 80" aria-hidden="true" focusable="false">
+  <g class="poster__faint">
+    <path d="M4 14h92M4 24h92"></path>
+    {[10, 22, 34, 46, 58, 70, 82, 94].map((x) => <ellipse cx={x} cy="19" rx="1.4" ry="5"></ellipse>)}
+  </g>
+  <g class="poster__events">
+    {events.map((x, i) => <path d={`M${x} ${17 + (i % 3) * 2}h3`}></path>)}
+  </g>
+  <path class="poster__alert-line" d="M50 21v15"></path>
+  <rect class="poster__card" x="18" y="38" width="64" height="34" rx="2.5"></rect>
+  <path class="poster__severity" d="M19.5 41v28"></path>
+  <g class="poster__graph">
+    <path d="M30 47l-5 6M30 47l5 7M30 47v12M25 53l5 6M35 54l-5 5"></path>
+    <circle class="poster__node--alert" cx="30" cy="47" r="1.8"></circle>
+    <circle cx="25" cy="53" r="1.3"></circle>
+    <circle cx="35" cy="54" r="1.3"></circle>
+    <circle cx="30" cy="59" r="1.3"></circle>
+  </g>
+  <g class="poster__text">
+    <text x="43" y="47">INC-0427 SAMPLE</text>
+    <text class="poster__text--alert" x="43" y="53">SEV HIGH</text>
+    <text class="poster__text--accent" x="43" y="59">T1566.002</text>
+    <text class="poster__text--dim" x="43" y="65">3 events / 1 host</text>
+  </g>
+</svg>

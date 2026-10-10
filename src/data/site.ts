@@ -15,20 +15,19 @@ export interface SiteLinks {
 export const site = {
   name: 'Satish Kohale',
   /** Used in the <title> of the homepage. */
-  headline: 'Entry-level security analyst (GRC, IAM, SOC)',
+  headline: 'Cybersecurity student (SOC, IAM, GRC)',
 
-  roleLine: 'Entry-level security analyst: GRC, IAM, SOC',
+  roleLine: 'Cybersecurity student',
+  /** The hero h1: covers all three target roles. */
+  heroTitle: 'Cybersecurity student open to SOC, IAM and GRC roles.',
+  /** Hero supporting line on "/" (role URLs use the role's own line). */
   valueStatement:
-    'Final-year computer science student building security automation: a phishing awareness platform, a malicious-URL classifier, and CyberArk PAM training.',
+    'CyberArk-trained in privileged access management, with hands-on phishing simulation and malicious-URL detection projects.',
   homeDescription:
-    'Satish Kohale, final-year computer science student in Pune, India, seeking entry-level GRC, IAM and SOC L1 roles. Projects, skills evidence and certifications.',
+    'Satish Kohale, final-year computer science student in Pune, India, looking for cybersecurity internships and entry-level SOC, IAM and GRC roles.',
 
   /** Three verifiable facts shown under the hero. */
-  proofFacts: [
-    'Google Cybersecurity Professional Certificate',
-    'CyberArk University: PAM and Identity Security',
-    'Built a phishing simulation platform (Python, n8n)',
-  ],
+  proofFacts: ['B.Tech CSE, final year', 'CyberArk PAM trained', 'Google Cybersecurity Certificate'],
 
   location: 'Pune, India',
   /** Public contact address. Swap for a domain alias (e.g. hello@yourdomain) when you have one. */
@@ -47,8 +46,8 @@ export const site = {
     graduation: null as string | null,
   },
 
-  availability: 'Open to entry-level roles',
-  rolesOpenTo: 'GRC, IAM, SOC L1',
+  availability: 'Open to opportunities',
+  rolesOpenTo: 'internships and entry-level roles in SOC, IAM and GRC',
 
   /**
    * Resume PDFs (paths under /public). Must be scrubbed versions WITHOUT phone
@@ -71,9 +70,7 @@ export const site = {
 /** Section anchors used by the header and footer navigation. */
 export const nav = [
   { label: 'Work', href: '/#work' },
-  { label: 'About', href: '/#about' },
-  { label: 'Skills', href: '/#skills' },
-  { label: 'Certifications', href: '/#certifications' },
-  { label: 'Education', href: '/#education' },
+  { label: 'Evidence', href: '/#evidence' },
+  { label: 'Background', href: '/#background' },
   { label: 'Contact', href: '/contact/' },
 ] as const;

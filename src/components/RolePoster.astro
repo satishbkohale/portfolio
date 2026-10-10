@@ -1,0 +1,14 @@
+---
+/** The 2D picture of a role's scene (final pose). One place to choose it. */
+import type { RoleId } from '../data/roles';
+import GrcPoster from './GrcPoster.astro';
+import IamPoster from './IamPoster.astro';
+import SocPoster from './SocPoster.astro';
+
+interface Props {
+  role: RoleId;
+}
+const { role } = Astro.props;
+---
+
+{role === 'soc' ? <SocPoster /> : role === 'iam' ? <IamPoster /> : <GrcPoster />}

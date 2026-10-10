@@ -1,0 +1,87 @@
+---
+/**
+ * One role's page section: a sticky stage (3D scene or SVG poster) beside a
+ * scroll story of four steps, then tools and related links.
+ *
+ * All three panes are in the HTML of every home page; inactive ones carry
+ * `hidden` (not rendered, not focusable, hidden from assistive tech).
+ * scripts/roles.ts switches panes and applies the data-* meta to the page.
+ */
+import { ROLE_ORDER, type RoleId, roles } from '../data/roles';
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+import RolePoster from './RolePoster.astro';
+
+interface Props {
+  role: RoleId;
+  active: boolean;
+}
+const { role, active } = Astro.props;
+const info = roles[role];
+const num = String(ROLE_ORDER.indexOf(role) + 1).padStart(2, '0');
+const stages = info.steps.map((s) => `${s.id}:${s.at}`).join(',');
+---
+
+<section
+  class="role"
+  id={role}
+  data-role={role}
+  data-role-pane={role}
+  aria-labelledby={`${role}-title`}
+  hidden={!active}
+  data-title={`${info.pageTitle} | ${site.name}`}
+  data-description={info.description}
+  data-url={`/${role}/`}
+  data-announce={`Showing ${info.short}: ${info.headline}`}
+>
+  <div class="container role__intro">
+    <header class="role__head">
+      <p class="role__kicker"><span class="role__num">{num}</span>{info.short} · {info.name}</p>
+      <h2 class="role__title" id={`${role}-title`} tabindex="-1">{info.headline}</h2>
+      <p class="role__statement">{info.statement}</p>
+    </header>
+  </div>
+  <div class="role__track container" data-chapter={role} data-stages={stages}>
+    <div class="role__stage" data-pin>
+      <div class="role__view" data-view={role} aria-hidden="true">
+        <div class="role__poster"><RolePoster role={role} /></div>
+      </div>
+    </div>
+    <div class="role__text">
+      <ol class="role__steps" aria-label={`What I do in ${info.short}`}>
+        {
+          info.steps.map((s, i) => (
+            <li class="role__step" data-step={s.id}>
+              <span class="role__step-num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <h3 class="role__step-title">{s.title}</h3>
+                <p class="role__step-text">{s.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="role__meta">
+        <h3 class="label">Tools and frameworks</h3>
+        <ul class="role__tools">
+          {info.tools.map((t) => <li>{t}</li>)}
+        </ul>
+        <h3 class="label">Related</h3>
+        <ul class="role__links">
+          {
+            info.links.map((l) => (
+              <li>
+                <a class="text-link" href={l.href}>
+                  {l.label}
+                  <Icon name="arrow-right" size={16} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

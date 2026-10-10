@@ -19,6 +19,7 @@ tools:
 outcome: A working end-to-end pipeline, covering preprocessing, feature engineering, training and evaluation.
 frameworks:
   - "MITRE ATT&CK T1566.002: Spearphishing Link (the technique these URLs typically serve)"
+icon: link
 featured: true
 order: 2
 todo:

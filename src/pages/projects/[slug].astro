@@ -38,7 +38,7 @@ const ordered = [...d.roles].sort((a, b) => Number(a.weight !== 'primary') - Num
 
     <header class="case__header">
       <p class="case__meta">
-        <span class="project-row__ref">{d.ref}</span>
+        <span class="label">{d.ref}</span>
         {ordered.map((r) => <RoleTag role={r.role} weight={r.weight} />)}
         {d.date && <span class="case__date">{d.date}</span>}
         {d.draft && <span class="draft-badge">Placeholder</span>}

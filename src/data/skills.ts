@@ -45,37 +45,37 @@ export const proficiencyHelp: Record<Proficiency, string> = {
 
 export const skills: Skill[] = [
   // GRC
-  { band: 'grc', name: 'Security awareness programme automation', proficiency: 'applied', evidence: ['P1'] },
-  { band: 'grc', name: 'Security policies and compliance basics', proficiency: 'studied', evidence: ['C3'] },
+  { band: 'grc', name: 'Security awareness automation', proficiency: 'applied', evidence: ['P1'] },
+  { band: 'grc', name: 'Policies and compliance', proficiency: 'studied', evidence: ['C3'] },
 
   // IAM
   {
     band: 'iam',
-    name: 'Privileged access management concepts: vault, password and session management',
+    name: 'Privileged access management',
     proficiency: 'studied',
     evidence: ['C1', 'C2'],
   },
-  { band: 'iam', name: 'Account onboarding to safes, platforms and policies', proficiency: 'studied', evidence: ['C1'] },
+  { band: 'iam', name: 'Account onboarding (safes, platforms)', proficiency: 'studied', evidence: ['C1'] },
   { band: 'iam', name: 'Least privilege', proficiency: 'studied', evidence: ['C1', 'C2'] },
-  { band: 'iam', name: 'Active Directory and LDAP user account management', proficiency: 'studied', evidence: [] },
+  { band: 'iam', name: 'Active Directory and LDAP', proficiency: 'studied', evidence: [] },
 
   // SOC
-  { band: 'soc', name: 'Phishing simulation and awareness campaigns', proficiency: 'applied', evidence: ['P1'] },
-  { band: 'soc', name: 'Malicious URL detection with machine learning', proficiency: 'applied', evidence: ['P2'] },
-  { band: 'soc', name: 'Security monitoring and incident response basics', proficiency: 'studied', evidence: ['C3'] },
-  { band: 'soc', name: 'Ticketing and documentation (ServiceNow, Jira, SOPs)', proficiency: 'studied', evidence: [] },
+  { band: 'soc', name: 'Phishing simulation', proficiency: 'applied', evidence: ['P1'] },
+  { band: 'soc', name: 'Malicious URL detection (ML)', proficiency: 'applied', evidence: ['P2'] },
+  { band: 'soc', name: 'Monitoring and incident response', proficiency: 'studied', evidence: ['C3'] },
+  { band: 'soc', name: 'Ticketing: ServiceNow, Jira', proficiency: 'studied', evidence: [] },
 
   // Tools
   { band: 'tools', name: 'Python', proficiency: 'applied', evidence: ['P1', 'P2'] },
   { band: 'tools', name: 'n8n', proficiency: 'applied', evidence: ['P1'] },
   { band: 'tools', name: 'REST APIs and JSON', proficiency: 'applied', evidence: ['P1'] },
-  { band: 'tools', name: 'CyberArk: Vault, PVWA, CPM, PSM', proficiency: 'studied', evidence: ['C1'] },
-  { band: 'tools', name: 'Git and GitHub, Postman, SQL', proficiency: 'studied', evidence: [] },
-  { band: 'tools', name: 'Windows, Linux, networking (TCP/IP, DNS, HTTP/S)', proficiency: 'studied', evidence: ['C3'] },
+  { band: 'tools', name: 'CyberArk (Vault, PVWA, CPM, PSM)', proficiency: 'studied', evidence: ['C1'] },
+  { band: 'tools', name: 'Git, Postman, SQL', proficiency: 'studied', evidence: [] },
+  { band: 'tools', name: 'Windows, Linux, networking', proficiency: 'studied', evidence: ['C3'] },
 
   // Frameworks
-  { band: 'frameworks', name: 'NIST Cybersecurity Framework', proficiency: 'studied', evidence: ['C3'] },
+  { band: 'frameworks', name: 'NIST CSF', proficiency: 'studied', evidence: ['C3'] },
   { band: 'frameworks', name: 'ISO/IEC 27001', proficiency: 'studied', evidence: [] },
-  { band: 'frameworks', name: 'MITRE ATT&CK and the Cyber Kill Chain', proficiency: 'studied', evidence: [] },
+  { band: 'frameworks', name: 'MITRE ATT&CK, Kill Chain', proficiency: 'studied', evidence: [] },
   { band: 'frameworks', name: 'OWASP Top 10', proficiency: 'studied', evidence: [] },
 ];

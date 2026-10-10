@@ -11,6 +11,8 @@ html {
   text-size-adjust: 100%;
   /* Keeps anchored and focused content clear of the sticky header (WCAG 2.4.11). */
   scroll-padding-top: calc(var(--header-h) + var(--space-4));
+  /* The role switcher sets scroll positions itself; anchoring would nudge them. */
+  overflow-anchor: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -32,6 +34,49 @@ body {
   overflow-wrap: break-word;
 }
 
+/* Backdrop: the page is near-black, but not flat. A faint grid that fades
+   toward the edges, and two soft glows of the accent that drift very slowly
+   (transform only, on the compositor). Fixed, behind everything, never takes
+   clicks. Text contrast is checked against the brightest point (palette test). */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  inset: 0;
+  background:
+    linear-gradient(rgb(255 255 255 / 0.022) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgb(255 255 255 / 0.022) 1px, transparent 1px) 0 0 / 48px 48px;
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 35%, #000 0%, transparent 85%);
+}
+
+body::after {
+  inset: -25%;
+  background:
+    radial-gradient(closest-side at 22% 18%, var(--backdrop-glow), transparent),
+    radial-gradient(closest-side at 82% 72%, var(--backdrop-glow-2), transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="off"]) body::after {
+    animation: backdrop-drift 48s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes backdrop-drift {
+  from {
+    transform: translate(-3%, -2%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(3%, 3%) rotate(8deg);
+  }
+}
+
 img,
 svg,
 canvas {
@@ -47,7 +92,7 @@ h4 {
   font-family: var(--font-display);
   font-weight: 500;
   line-height: var(--leading-tight);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
@@ -79,11 +124,12 @@ a {
 }
 
 a:hover {
-  text-decoration-color: var(--text);
+  color: var(--accent-text);
+  text-decoration-color: var(--accent-text);
 }
 
 :focus-visible {
-  outline: 2px solid var(--text);
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
   border-radius: var(--radius);
 }
@@ -93,7 +139,7 @@ main:focus {
 }
 
 ::selection {
-  background: #3a4650;
+  background: color-mix(in srgb, var(--accent) 42%, transparent);
   color: var(--text);
 }
 
@@ -153,8 +199,10 @@ button {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
     scroll-behavior: auto !important;
   }
 }

@@ -1,26 +1,42 @@
 ---
 /**
- * Site header. The mobile menu uses the native Popover API, so it opens,
- * closes on Escape or outside click, and returns focus without JavaScript.
- * scripts/nav.ts only adds "close after choosing a link".
+ * Site header: the main bar (wordmark, navigation, resume) and, on the home
+ * pages only, a slim bar below it with the SOC / IAM / GRC role switcher.
+ * Both stay sticky together; --header-h is their combined height.
+ *
+ * The switcher is three real links (/soc/, /iam/, /grc/), so it works without
+ * JavaScript. scripts/roles.ts turns it into an in-page switch with a hover
+ * band, a reveal transition, arrow-key movement and history.
+ *
+ * The mobile menu uses the native Popover API, so it opens, closes on Escape
+ * or outside click, and returns focus without JavaScript.
  */
+import { ROLE_ORDER, type RoleId, roles } from '../data/roles';
 import { nav, site } from '../data/site';
 import Icon from './Icon.astro';
 
+interface Props {
+  role?: RoleId | undefined;
+}
+const { role } = Astro.props;
 const path = Astro.url.pathname;
 const current = (href: string) => (href === '/contact/' && path.startsWith('/contact') ? 'page' : undefined);
+// On the home pages (any role) section links stay on the current page and role.
+const local = (href: string) => (role && href.startsWith('/#') ? href.slice(1) : href);
+// Other pages (projects, resume...) get an explicit way back to the home page.
+const items = role ? nav : [{ label: 'Home', href: '/' }, ...nav];
 ---
 
 <header class="site-header">
   <div class="site-header__inner container">
-    <a class="wordmark" href="/">{site.name}</a>
+    <a class="wordmark" href="/"><Icon name="lock" size={14} class="wordmark__mark" />{site.name}</a>
 
     <nav class="site-nav" aria-label="Main">
       <ul class="site-nav__list">
         {
-          nav.map((item) => (
+          items.map((item) => (
             <li>
-              <a href={item.href} aria-current={current(item.href)}>
+              <a href={local(item.href)} aria-current={current(item.href)}>
                 {item.label}
               </a>
             </li>
@@ -29,13 +45,33 @@ const current = (href: string) => (href === '/contact/' && path.startsWith('/con
       </ul>
     </nav>
 
-    <a class="button button--primary button--small site-header__resume" href="/resume/">Resume</a>
+    <a class="button button--primary button--small site-header__resume" href="/resume/"
+      ><Icon name="lock" size={14} /><span>Resume</span></a
+    >
 
     <button class="menu-button" type="button" popovertarget="mobile-menu" aria-label="Open menu">
       <Icon name="menu" />
       <span class="menu-button__text">Menu</span>
     </button>
   </div>
+
+  {
+    role && (
+      <div class="switcher-bar">
+        <nav class="switcher container" aria-label="Focus area" data-switcher>
+          <ul class="switcher__list">
+            {ROLE_ORDER.map((r) => (
+              <li>
+                <a class="switcher__link" href={`/${r}/`} data-role-link={r} aria-current={r === role ? 'page' : undefined}>
+                  <span class="switcher__short">{roles[r].short}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    )
+  }
 
   <nav id="mobile-menu" class="mobile-menu" popover aria-label="Main">
     <div class="mobile-menu__head">
@@ -47,9 +83,9 @@ const current = (href: string) => (href === '/contact/' && path.startsWith('/con
     </div>
     <ul class="mobile-menu__list">
       {
-        nav.map((item) => (
+        items.map((item) => (
           <li>
-            <a href={item.href} aria-current={current(item.href)}>
+            <a href={local(item.href)} aria-current={current(item.href)}>
               {item.label}
             </a>
           </li>

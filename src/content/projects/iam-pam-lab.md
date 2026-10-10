@@ -17,6 +17,7 @@ approach:
 tools:
   - Placeholder tool
 outcome: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+icon: key
 featured: true
 order: 3
 draft: true

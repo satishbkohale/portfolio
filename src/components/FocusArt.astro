@@ -1,0 +1,59 @@
+---
+/**
+ * Small line drawings for the three focus areas. They draw themselves once
+ * when scrolled into view (see .art__draw in home.css). Decorative.
+ *   soc: a log stream with one spike flagged as an alert
+ *   iam: identity -> access check -> resource, granted
+ *   grc: a checklist mapped to a control (shield)
+ */
+import type { RoleId } from '../data/roles';
+
+interface Props {
+  kind: RoleId;
+}
+const { kind } = Astro.props;
+---
+
+<svg class="art" viewBox="0 0 160 90" aria-hidden="true" focusable="false">
+  {
+    kind === 'soc' && (
+      <>
+        <path class="art__faint" d="M4 12h52M4 22h36M4 32h44" />
+        <path class="art__draw" pathLength="1" d="M4 64h36l6-2 6 2 6-38 8 52 7-30 5 16h78" />
+        <circle class="art__alert" cx="58" cy="26" r="3.2" />
+        <circle class="art__ping" cx="58" cy="26" r="3.2" />
+        <path class="art__faint" d="M96 12h60M118 22h38" />
+      </>
+    )
+  }
+  {
+    kind === 'iam' && (
+      <>
+        <circle class="art__draw" pathLength="1" cx="18" cy="46" r="10" />
+        <path class="art__draw" pathLength="1" d="M13 44a5 5 0 0 1 10 0M12.5 52a6 6 0 0 1 11 0" />
+        <path class="art__faint art__dash" d="M30 46h38" />
+        <rect class="art__draw" pathLength="1" x="68" y="30" width="24" height="32" rx="4" />
+        <path class="art__accent art__draw" pathLength="1" d="M74 46l4.5 4.5 8-9" />
+        <path class="art__accent art__draw art__draw--late" pathLength="1" d="M92 46h38" />
+        <rect class="art__draw art__draw--late" pathLength="1" x="130" y="34" width="24" height="24" rx="3" />
+        <path class="art__faint" d="M136 42h12M136 48h8" />
+      </>
+    )
+  }
+  {
+    kind === 'grc' && (
+      <>
+        <rect class="art__draw" pathLength="1" x="4" y="14" width="10" height="10" rx="2" />
+        <rect class="art__draw" pathLength="1" x="4" y="40" width="10" height="10" rx="2" />
+        <rect class="art__draw" pathLength="1" x="4" y="66" width="10" height="10" rx="2" />
+        <path class="art__accent art__draw art__draw--late" pathLength="1" d="M6.5 19l2.2 2.2 4-4.4" />
+        <path class="art__accent art__draw art__draw--late" pathLength="1" d="M6.5 45l2.2 2.2 4-4.4" />
+        <circle class="art__pending" cx="9" cy="71" r="1.8" />
+        <path class="art__faint" d="M22 19h50M22 45h40M22 71h46" />
+        <path class="art__faint art__dash" d="M78 19c20 0 20 26 42 26M68 45h52M74 71c20 0 24-26 46-26" />
+        <path class="art__draw" pathLength="1" d="M136 20l16 6v14c0 12-8 19-16 22-8-3-16-10-16-22V26z" />
+        <path class="art__accent art__draw art__draw--late" pathLength="1" d="M130 41l4 4 8-8" />
+      </>
+    )
+  }
+</svg>

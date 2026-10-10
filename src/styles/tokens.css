@@ -1,49 +1,74 @@
 /*
  * Design tokens. Single source of truth for colour, type, space and motion.
- * Contrast ratios (WCAG 2.x) are measured against --bg unless noted;
- * see docs/01-phase-1-plan.md section 4.2.
+ * Contrast ratios (WCAG 2.x) are measured against --bg unless noted.
+ * One accent (blue) carries all emphasis; everything else is greyscale, and
+ * amber is the only warning colour. The 3D scenes (src/three/palette.ts) and
+ * the favicon and social image (scripts/generate-images.mjs) read these
+ * values, so every colour is defined here once.
  */
 :root {
   color-scheme: dark;
 
   /* Surfaces */
-  --bg: #0d1114;
-  --surface: #141a1e;
-  --surface-raised: #1c2429;
-  --hairline: #2a333a; /* decorative rules only */
-  --boundary: #6b7882; /* component borders: 4.18:1 (3.47:1 on raised) */
+  --bg: #07090c;
+  --surface: #0d1117;
+  --surface-raised: #11161d;
+  --hairline: rgb(255 255 255 / 0.08); /* decorative rules only */
+  --hairline-strong: rgb(255 255 255 / 0.14);
+  --boundary: #566173; /* component borders: >= 3:1 on bg */
 
   /* Text */
-  --text: #e8e4dc; /* 14.96:1 */
-  --text-2: #b4babe; /* 9.67:1 */
-  --text-3: #919aa1; /* 6.63:1, 5.50:1 on raised */
-  --on-light: #0d1114; /* text on light fills */
+  --text: #e8eaed; /* 16.6:1 */
+  --text-2: #8b93a1; /* 6.4:1 */
+  --text-3: #7a8494; /* 5.3:1, 4.8:1 on raised */
+  --on-light: #07090c; /* text on light fills */
 
-  /* Role channels: identify roles only, never status */
-  --grc: #b5d6ae; /* policy, 11.91:1 */
-  --iam: #7ba4db; /* identity, 7.38:1 */
-  --soc: #e6ae5e; /* activity, 9.55:1 */
+  /* Accent. Two tones: the brand blue for fills, lines, icons, glows and 3D
+     (4.0:1 on bg, so never small text), and a lighter tint of it for accent
+     text, links, mono labels, status text and focus rings. */
+  --accent: #3275a8; /* 4.0:1 on bg, 3.8:1 on surface (non-text needs 3:1) */
+  --accent-text: #6fa8d6; /* 7.8:1 on bg, 7.4:1 on surface, 7.1:1 on raised */
+  --on-accent: #ffffff; /* text on blue fills: 4.9:1 (#e8eaed would be 4.1:1) */
+  --accent-strong: #2b6896; /* hover fill: darker, so white text gains (5.9:1) */
+  --accent-glow: color-mix(in srgb, var(--accent) 30%, transparent);
+  --accent-faint: color-mix(in srgb, var(--accent) 10%, transparent);
+  /* Backdrop glows (base.css): the accent at low strength. The brightest
+     point is bg + 9% blue, where every text colour still passes 4.5:1. */
+  --backdrop-glow: color-mix(in srgb, var(--accent) 9%, transparent);
+  --backdrop-glow-2: color-mix(in srgb, var(--accent) 6%, transparent);
+  /* Light band that sweeps across blue fills. Capped at 4% white: white text
+     stays >= 4.58:1 at the band's peak (5% gives 4.50:1, 12% 3.94:1). */
+  --sweep: rgb(255 255 255 / 0.04);
 
-  /* Status */
-  --deny: #f2a193; /* errors and deny state, 9.30:1 */
+  /* Role marks: one blue; the mark's shape tells the roles apart (square
+     GRC, circle IAM, triangle SOC), so amber keeps meaning "warning" only. */
+  --grc: var(--accent);
+  --iam: var(--accent);
+  --soc: var(--accent);
+
+  /* Status: amber is the only warning colour (11.2:1 on bg) */
+  --pending: #f5b84a;
+  --deny: #ff6b6b;
 
   /* Type families (fallback faces in fonts.css limit layout shift) */
-  --font-display: "Newsreader Variable", "Newsreader Fallback", Georgia, serif;
-  --font-body: "Atkinson Hyperlegible Next Variable", "Atkinson Next Fallback", Arial, sans-serif;
-  --font-mono: "Atkinson Hyperlegible Mono Variable", "Atkinson Mono Fallback", "Courier New", monospace;
+  --font-display: "Geist Variable", "Geist Fallback", Arial, sans-serif;
+  --font-body: "Geist Variable", "Geist Fallback", Arial, sans-serif;
+  --font-mono: "Geist Mono Variable", "Geist Mono Fallback", "Courier New", monospace;
 
-  /* Fluid type scale: ~1.2 ratio at 320px rising to ~1.333 at 1280px */
-  --step--1: clamp(0.8125rem, 0.79rem + 0.11vw, 0.875rem);
-  --step-0: clamp(1.0625rem, 1.04rem + 0.11vw, 1.125rem);
-  --step-1: clamp(1.25rem, 1.18rem + 0.33vw, 1.5rem);
-  --step-2: clamp(1.5rem, 1.37rem + 0.65vw, 2rem);
-  --step-3: clamp(1.8rem, 1.56rem + 1.2vw, 2.67rem);
-  --step-4: clamp(2.16rem, 1.75rem + 2.05vw, 3.55rem);
-  --step-5: clamp(2.6rem, 1.9rem + 3.4vw, 4.6rem);
+  /* Fluid type scale */
+  --step--1: clamp(0.8125rem, 0.8rem + 0.06vw, 0.875rem);
+  --step-0: clamp(1rem, 0.98rem + 0.1vw, 1.0625rem);
+  --step-1: clamp(1.125rem, 1.07rem + 0.28vw, 1.3125rem);
+  --step-2: clamp(1.3125rem, 1.2rem + 0.55vw, 1.625rem);
+  --step-3: clamp(1.625rem, 1.4rem + 1.1vw, 2.25rem);
+  --step-4: clamp(2rem, 1.55rem + 2.2vw, 3.25rem);
+  --step-5: clamp(2.75rem, 1.6rem + 5.6vw, 5.75rem);
 
-  --leading-tight: 1.15;
+  --label: 0.75rem; /* mono uppercase labels */
+
+  --leading-tight: 1.08;
   --leading-body: 1.6;
-  --measure: 68ch;
+  --measure: 62ch;
 
   /* Spacing scale, 4px base */
   --space-1: 0.25rem;
@@ -55,26 +80,47 @@
   --space-7: 3rem;
   --space-8: 4rem;
   --space-9: 6rem;
-  --space-10: 8rem;
+  --space-10: 9rem;
 
   /* Layout */
-  --max-width: 75rem;
+  --max-width: 72rem;
   --gutter: 1.5rem;
   --margin: clamp(1rem, 5vw, 4rem);
-  --section-gap: var(--space-9);
-  --header-h: 3.75rem;
-  --radius: 2px;
+  --section-gap: var(--space-10);
+  /* Sticky header: the main bar, plus the role switcher bar on home pages.
+     --header-h is their combined height; every sticky element uses it. */
+  --bar-h: 3.75rem;
+  --switch-h: 0rem;
+  --header-h: calc(var(--bar-h) + var(--switch-h));
+  --radius: 6px;
+  --radius-pill: 999px;
 
   /* Motion */
   --dur-1: 120ms;
-  --dur-2: 200ms;
-  --dur-3: 320ms;
+  --dur-2: 220ms;
+  --dur-3: 500ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 @media (width < 48rem) {
   :root {
     --gutter: 1rem;
-    --section-gap: var(--space-8);
+    --section-gap: var(--space-9);
+  }
+}
+
+[data-switcher] {
+  --switch-h: 2.5rem;
+}
+
+/* Small screens: 3.25rem + 2.75rem = 6rem (96px) of sticky header. */
+@media (width < 56rem) {
+  :root {
+    --bar-h: 3.25rem;
+  }
+
+  [data-switcher] {
+    --switch-h: 2.75rem;
   }
 }

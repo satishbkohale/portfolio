@@ -11,39 +11,46 @@
   padding-top: var(--section-gap);
 }
 
-main > .section:last-child {
-  padding-bottom: var(--section-gap);
-}
-
 .section__more {
-  margin-top: var(--space-5);
+  margin-top: var(--space-6);
 }
 
-/* Section headings: a rule and a serif clause number, as in a standard. */
+/* Section headings: numbered mono label, then the title. */
 .section-header {
-  display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  gap: var(--space-4);
-  align-items: baseline;
-  margin-bottom: var(--space-6);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--hairline);
+  margin-bottom: var(--space-7);
+}
+
+.section-header__kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-2);
 }
 
 .section-header__num {
-  font-family: var(--font-display);
-  font-size: var(--step-2);
-  line-height: 1;
-  color: var(--text-3);
+  color: var(--accent-text);
+}
+
+.section-header__kicker::after {
+  content: "";
+  flex: 0 1 4rem;
+  height: 1px;
+  background: var(--hairline-strong);
 }
 
 .section-header__title {
-  font-size: var(--step-3);
+  max-width: 20ch;
+  font-size: var(--step-4);
 }
 
 .section-header__intro {
-  margin-top: var(--space-3);
-  max-width: 60ch;
+  margin-top: var(--space-4);
+  max-width: 52ch;
   color: var(--text-2);
 }
 
@@ -53,24 +60,66 @@ main > .section:last-child {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--bg);
-  border-bottom: 1px solid var(--hairline);
+  background: rgb(7 9 12 / 0.82);
+  backdrop-filter: blur(12px);
+}
+
+/* No dividing lines. Once the page scrolls (data-scrolled, scripts/nav.ts),
+   a soft 14px fade below the header separates it from content passing
+   underneath. It sits outside the header's box, so --header-h is unchanged,
+   and it never takes clicks. */
+.site-header::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(rgb(7 9 12 / 0.6), rgb(7 9 12 / 0));
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease);
+  pointer-events: none;
+}
+
+[data-scrolled] .site-header::after {
+  opacity: 1;
+}
+
+/* Header Resume: its own sweep rhythm. */
+.site-header .site-header__resume {
+  --sweep-period: 9.1s;
+  --sweep-delay: 2.6s;
+}
+
+/* The header is always on screen; cancel the page's scroll-padding for its
+   controls so focusing them never scrolls the page. */
+.site-header a,
+.site-header button {
+  scroll-margin-top: calc(-1 * (var(--header-h) + var(--space-4)));
 }
 
 .site-header__inner {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  min-height: var(--header-h);
+  gap: var(--space-5);
+  height: var(--bar-h);
 }
 
 .wordmark {
+  display: inline-flex;
   margin-right: auto;
-  font-family: var(--font-display);
-  font-size: var(--step-1);
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
   font-weight: 500;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   text-decoration: none;
+}
+
+.wordmark__mark {
+  color: var(--accent);
 }
 
 .site-nav__list {
@@ -84,15 +133,13 @@ main > .section:last-child {
   align-items: center;
   min-height: 2.75rem;
   color: var(--text-2);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   text-decoration: none;
 }
 
 .site-nav a:hover,
 .site-nav a[aria-current="page"] {
   color: var(--text);
-  text-decoration: underline;
-  text-decoration-color: var(--text-3);
 }
 
 .menu-button {
@@ -103,19 +150,25 @@ main > .section:last-child {
   min-width: 2.75rem;
   justify-content: center;
   padding: 0 var(--space-3);
-  border: 1px solid var(--boundary);
+  border: 1px solid var(--hairline-strong);
   border-radius: var(--radius);
   background: transparent;
   color: var(--text);
+  font-size: 0.875rem;
   cursor: pointer;
 }
 
 .menu-button:hover {
-  border-color: var(--text);
+  border-color: var(--boundary);
 }
 
-@media (width < 64rem) {
+@media (width < 56rem) {
   .site-nav {
+    display: none;
+  }
+
+  /* Resume lives in the menu on small screens, keeping the bar uncrowded. */
+  .site-header .site-header__resume {
     display: none;
   }
 
@@ -125,12 +178,16 @@ main > .section:last-child {
 }
 
 @media (width < 30rem) {
+  .site-header__inner {
+    gap: var(--space-3);
+  }
+
   .menu-button__text {
     display: none;
   }
 
-  .wordmark {
-    font-size: 1.125rem;
+  .site-header__resume {
+    display: none;
   }
 }
 
@@ -145,7 +202,7 @@ main > .section:last-child {
   padding: 0 var(--margin) var(--space-6);
   overflow-y: auto;
   border: 0;
-  border-bottom: 1px solid var(--boundary);
+  border-bottom: 1px solid var(--hairline-strong);
   background: var(--bg);
   color: var(--text);
 }
@@ -158,16 +215,16 @@ main > .section:last-child {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: var(--header-h);
+  min-height: var(--bar-h);
   border-bottom: 1px solid var(--hairline);
 }
 
 .mobile-menu__title {
   font-family: var(--font-mono);
-  font-size: var(--step--1);
-  letter-spacing: 0.06em;
+  font-size: var(--label);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .mobile-menu__list {
@@ -176,68 +233,68 @@ main > .section:last-child {
 
 .mobile-menu__list a {
   display: block;
-  padding: var(--space-3) 0;
+  padding: var(--space-4) 0;
   border-bottom: 1px solid var(--hairline);
-  font-family: var(--font-display);
   font-size: var(--step-2);
+  font-weight: 500;
+  letter-spacing: -0.02em;
   text-decoration: none;
 }
 
-.mobile-menu__list a[aria-current="page"] {
-  text-decoration: underline;
-}
-
-/* Footer ------------------------------------------------------------------ */
+/* Footer: one quiet line ------------------------------------------------- */
 
 .site-footer {
   margin-top: var(--section-gap);
-  padding-block: var(--space-7) var(--space-6);
+  padding-block: var(--space-6);
   border-top: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: var(--label);
+  letter-spacing: 0.04em;
   color: var(--text-2);
-  font-size: var(--step--1);
 }
 
-.site-footer__grid {
-  display: grid;
-  gap: var(--space-6);
+.site-footer__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
 }
 
-@media (width >= 48rem) {
-  .site-footer__grid {
-    grid-template-columns: 1.2fr 1fr 1fr;
-  }
-}
-
-.site-footer__name {
-  font-family: var(--font-display);
-  font-size: var(--step-1);
-  color: var(--text);
-}
-
-.site-footer__meta {
-  margin-top: var(--space-1);
-}
-
-.site-footer__nav ul,
 .site-footer__links {
-  display: grid;
-  gap: var(--space-1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-5);
   list-style: none;
 }
 
-.site-footer__nav a,
-.site-footer__links a {
+.site-footer a {
   display: inline-flex;
-  min-height: 2rem;
   align-items: center;
+  min-height: 2rem;
   color: var(--text-2);
+  text-decoration: none;
 }
 
-.site-footer__base {
-  display: grid;
-  gap: var(--space-1);
-  margin-top: var(--space-7);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--hairline);
+.site-footer a:hover {
+  color: var(--accent-text);
+}
+
+.site-footer__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.site-footer__status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.site-footer__note {
+  margin-top: var(--space-3);
   color: var(--text-3);
 }

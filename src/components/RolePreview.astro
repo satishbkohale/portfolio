@@ -1,0 +1,50 @@
+---
+/**
+ * A visual copy of the top of a role pane, for the switcher's reveal layer.
+ * Same layout classes as RolePane, so when the layer fully covers the page it
+ * lines up exactly with the real role section underneath, and can fade away
+ * without a jump. Decorative copy: no headings, ids or links (the layer is
+ * hidden from assistive tech).
+ */
+import RolePoster from './RolePoster.astro';
+import { ROLE_ORDER, type RoleId, roles } from '../data/roles';
+
+interface Props {
+  role: RoleId;
+}
+const { role } = Astro.props;
+const info = roles[role];
+const num = String(ROLE_ORDER.indexOf(role) + 1).padStart(2, '0');
+---
+
+<div class="role role--preview" data-role={role}>
+  <div class="container role__intro">
+    <div class="role__head">
+      <p class="role__kicker"><span class="role__num">{num}</span>{info.short} · {info.name}</p>
+      <p class="role__title">{info.headline}</p>
+      <p class="role__statement">{info.statement}</p>
+    </div>
+  </div>
+  <div class="role__track container">
+    <div class="role__stage">
+      <div class="role__view">
+        <div class="role__poster"><RolePoster role={role} /></div>
+      </div>
+    </div>
+    <div class="role__text">
+      <ol class="role__steps">
+        {
+          info.steps.map((s, i) => (
+            <li class="role__step" aria-current={i === 0 ? 'step' : undefined}>
+              <span class="role__step-num">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <p class="role__step-title">{s.title}</p>
+                <p class="role__step-text">{s.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</div>

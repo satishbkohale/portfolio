@@ -16,6 +16,7 @@ approach:
 tools:
   - Placeholder tool
 outcome: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+icon: activity
 order: 5
 draft: true
 todo:

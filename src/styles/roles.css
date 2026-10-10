@@ -1,0 +1,883 @@
+/*
+ * Role switcher, role panes and the peek sheet (src/scripts/roles.ts).
+ * Motion: transform and opacity only. Reduced motion is handled globally
+ * (base.css) and by the script, which swaps instantly.
+ */
+
+/* Switcher bar: the slim second row of the one sticky header. No lines:
+   it shares the header's background, and the pill group is a soft filled
+   track. ------------------------------------------------------------------ */
+
+.switcher-bar {
+  display: flex;
+  align-items: center;
+  height: var(--switch-h);
+}
+
+.switcher {
+  display: flex;
+  justify-content: center;
+}
+
+.switcher__list {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.05);
+  list-style: none;
+}
+
+.switcher__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.25rem;
+  min-height: 1.75rem;
+  padding: 0 1rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--label);
+  letter-spacing: 0.12em;
+  color: var(--text-2);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-2) var(--ease),
+    color var(--dur-2) var(--ease);
+}
+
+.switcher__link:hover {
+  color: var(--text);
+  background: rgb(255 255 255 / 0.07);
+}
+
+/* Active pill: white on blue (4.9:1); a soft light band sweeps across it
+   (components.css), on its own rhythm. */
+.switcher__link[aria-current="page"] {
+  position: relative;
+  overflow: hidden;
+  background: var(--accent);
+  color: var(--on-accent);
+  --sweep-period: 7.3s;
+  --sweep-delay: 1.1s;
+}
+
+.switcher__link[aria-current="page"]:hover {
+  background: var(--accent-strong);
+}
+
+.switcher__link > span {
+  position: relative;
+  z-index: 1;
+}
+
+.switcher__link:focus-visible {
+  outline-offset: 2px;
+  border-radius: var(--radius-pill);
+}
+
+@media (width < 56rem) {
+  .switcher__list {
+    width: 100%;
+  }
+
+  .switcher__list li {
+    flex: 1;
+  }
+
+  .switcher__link {
+    width: 100%;
+    min-height: 2rem;
+  }
+}
+
+/* Compact hero (role URLs) ------------------------------------------------ */
+
+.hero--compact .hero__grid {
+  padding-block: var(--space-7) var(--space-5);
+}
+
+.hero--compact .hero__visual {
+  width: min(100%, 22rem);
+}
+
+/* Smaller labels in the compact figure, so they crowd the lock less. */
+.orbit--compact .orbit__tag {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.625rem;
+}
+
+.hero--compact .hero__motion {
+  display: flex;
+  width: fit-content;
+  margin: var(--space-2) 0 0 auto;
+}
+
+@media (width < 60rem) {
+  /* Small screens: just the essentials, so the role starts on the first screen. */
+  .hero--compact .hero__visual,
+  .hero--compact .hero__facts {
+    display: none;
+  }
+
+  .hero--compact .hero__grid {
+    padding-block: var(--space-5) 0;
+  }
+
+  /* Role URLs on small screens: name, headline and actions only, so the
+     role itself starts on the first screen. */
+  .hero--compact .hero__eyebrow,
+  .hero--compact .hero__lede {
+    display: none;
+  }
+
+  .hero--compact .hero__name {
+    margin-top: 0;
+  }
+
+  .hero--compact .hero__title {
+    font-size: var(--step-3);
+  }
+
+  .hero--compact .hero__actions {
+    margin-top: var(--space-4);
+  }
+
+  .hero--compact .hero__actions .button {
+    min-height: 2.5rem;
+    padding: 0 var(--space-4);
+  }
+}
+
+/* Role panes --------------------------------------------------------------- */
+
+.role__intro {
+  padding-top: var(--space-8);
+}
+
+.role__track {
+  display: grid;
+  gap: var(--space-6);
+  padding-top: var(--space-5);
+}
+
+.role__stage {
+  position: relative;
+}
+
+.role__view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.role__poster {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transition: opacity 0.8s var(--ease);
+}
+
+.role__poster .poster,
+.role__poster .art {
+  width: 86%;
+  max-width: 34rem;
+  height: auto;
+  max-height: 90%;
+}
+
+.is-3d .role__poster {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.8s var(--ease),
+    visibility 0s linear 0.8s;
+}
+
+.role__kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.role__kicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: var(--role-color);
+}
+
+.role[data-role="iam"] .role__kicker::before {
+  border-radius: 50%;
+}
+
+.role[data-role="soc"] .role__kicker::before {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.role__num {
+  color: var(--accent-text);
+}
+
+.role__title {
+  margin-top: var(--space-4);
+  font-size: var(--step-5);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.role__title:focus {
+  outline: none;
+}
+
+.role__title:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 4px;
+}
+
+.role__statement {
+  max-width: 28ch;
+  margin-top: var(--space-4);
+  font-size: var(--step-2);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--text-2);
+}
+
+.role__steps {
+  list-style: none;
+}
+
+.role__step {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  align-content: center;
+  min-height: 46svh;
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--hairline);
+}
+
+.role__step-num {
+  padding-top: 0.35em;
+  font-family: var(--font-mono);
+  font-size: var(--label);
+  color: var(--text-3);
+  transition: color var(--dur-2) var(--ease);
+}
+
+.role__step-title {
+  font-size: var(--step-3);
+  font-weight: 500;
+  /* Set explicitly so the heading and the reveal layer's copy match exactly. */
+  line-height: var(--leading-tight);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--text-2);
+  transition: color var(--dur-2) var(--ease);
+}
+
+.role__step-text {
+  max-width: 34ch;
+  margin-top: var(--space-2);
+  color: var(--text-2);
+}
+
+.role__step[aria-current] .role__step-title {
+  color: var(--text);
+}
+
+.role__step[aria-current] .role__step-num {
+  color: var(--accent-text);
+}
+
+.role__meta {
+  display: grid;
+  gap: var(--space-3);
+  padding-block: var(--space-6) var(--space-4);
+  border-top: 1px solid var(--hairline);
+}
+
+.role__meta .label:not(:first-child) {
+  margin-top: var(--space-4);
+}
+
+.role__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.role__tools li {
+  padding: 0.2rem 0.65rem;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.role__links {
+  list-style: none;
+}
+
+@media (width >= 60rem) {
+  .role__track {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    column-gap: var(--space-7);
+  }
+
+  .role__stage {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-5));
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    height: calc(100svh - var(--header-h) - 2 * var(--space-5));
+  }
+
+  .role__text {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+@media (width < 60rem) {
+  .role__intro {
+    padding-top: var(--space-6);
+  }
+
+  /* Small screens: the stage pins at the top and the text scrolls beneath. */
+  .role__stage {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 2;
+    height: 44svh;
+    background: var(--bg);
+  }
+
+  .role__stage::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 2rem;
+    background: linear-gradient(var(--bg), rgb(7 9 12 / 0));
+    pointer-events: none;
+  }
+
+  .role__step {
+    min-height: 34svh;
+  }
+}
+
+/* Posters (2D pictures of each scene) ------------------------------------ */
+
+.poster {
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.poster__faint {
+  stroke: rgb(255 255 255 / 0.16);
+  stroke-width: 0.4;
+}
+
+.poster__events {
+  stroke: var(--text-3);
+  stroke-width: 1.4;
+}
+
+.poster__alert-line {
+  stroke: var(--pending);
+  stroke-width: 0.4;
+  stroke-dasharray: 1 1.4;
+}
+
+.poster__card {
+  fill: var(--surface);
+  stroke: rgb(245 184 74 / 0.6);
+  stroke-width: 0.4;
+}
+
+.poster__severity {
+  stroke: var(--pending);
+  stroke-width: 0.8;
+}
+
+.poster__graph {
+  stroke: rgb(245 184 74 / 0.7);
+  stroke-width: 0.45;
+}
+
+.poster__graph circle {
+  fill: #c99a55;
+  stroke: none;
+}
+
+.poster__graph .poster__node--alert {
+  fill: var(--pending);
+}
+
+.poster__text {
+  font-family: var(--font-mono);
+  font-size: 3.2px;
+  fill: var(--text);
+  stroke: none;
+}
+
+.poster__text--alert {
+  fill: var(--pending);
+}
+
+.poster__text--accent {
+  fill: var(--accent-text);
+}
+
+.poster__text--dim {
+  fill: var(--text-2);
+}
+
+/* Reveal layer (switcher hover band and click transition) -------------- */
+
+.reveal {
+  --band-h: 5.75rem;
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  z-index: 45;
+  height: calc(100lvh - var(--header-h));
+  pointer-events: none;
+}
+
+/* The page below the band dims only lightly, as if lifted slightly away. */
+.reveal__dim {
+  position: absolute;
+  inset: 0;
+  background: rgb(7 9 12 / 0.16);
+  opacity: 0;
+  transition: opacity 200ms var(--ease);
+}
+
+.reveal {
+  overflow: hidden;
+}
+
+/* Mask: outer and inner move in opposite directions by the same amount. */
+.reveal__clip,
+.reveal__inner {
+  position: absolute;
+  inset: 0;
+  transition: transform 380ms var(--ease-out);
+  will-change: transform;
+}
+
+.reveal__clip {
+  overflow: hidden;
+  transform: translateY(-100%);
+  transition:
+    transform 380ms var(--ease-out),
+    opacity 220ms var(--ease);
+}
+
+.reveal__inner {
+  background: var(--bg);
+  transform: translateY(100%);
+}
+
+.reveal__edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  box-shadow: 0 8px 22px rgb(0 0 0 / 0.5);
+  opacity: 0;
+  transition:
+    transform 380ms var(--ease-out),
+    opacity 200ms var(--ease);
+}
+
+.reveal[data-state="band"] .reveal__dim,
+.reveal[data-state="cover"] .reveal__dim {
+  opacity: 1;
+}
+
+.reveal[data-state="band"] .reveal__clip {
+  transform: translateY(calc(-100% + var(--band-h)));
+  cursor: pointer;
+  pointer-events: auto; /* hit testing follows the mask: the visible strip only */
+}
+
+.reveal[data-state="band"] .reveal__inner {
+  transform: translateY(calc(100% - var(--band-h)));
+}
+
+.reveal[data-state="band"] .reveal__edge {
+  transform: translateY(var(--band-h));
+  opacity: 1;
+}
+
+.reveal[data-state="cover"] .reveal__clip,
+.reveal[data-state="cover"] .reveal__inner,
+.reveal[data-state="fade"] .reveal__clip,
+.reveal[data-state="fade"] .reveal__inner {
+  transform: translateY(0);
+}
+
+.reveal[data-state="cover"] .reveal__edge {
+  transform: translateY(calc(100lvh - var(--header-h)));
+  opacity: 1;
+}
+
+.reveal[data-state="fade"] .reveal__clip {
+  opacity: 0;
+}
+
+/* Only the target role is rendered (no layout cost for the other two). */
+.reveal__role {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+
+.reveal__role[data-active] {
+  display: block;
+  animation: reveal-swap 120ms var(--ease);
+}
+
+@keyframes reveal-swap {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Band: compact summary. Covered: the full preview, aligned with the page. */
+.reveal__band {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  height: var(--band-h);
+  transition: opacity 150ms var(--ease);
+}
+
+.role--preview {
+  position: relative;
+  top: var(--reveal-align, 0px);
+  opacity: 0;
+  transition: opacity 150ms var(--ease);
+}
+
+.reveal[data-state="cover"] .reveal__band,
+.reveal[data-state="fade"] .reveal__band {
+  opacity: 0;
+}
+
+.reveal[data-state="cover"] .role--preview,
+.reveal[data-state="fade"] .role--preview {
+  opacity: 1;
+}
+
+.role--preview .role__step-title {
+  text-wrap: balance;
+}
+
+.reveal__band-text {
+  min-width: 0;
+}
+
+.reveal__kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.reveal__headline {
+  overflow: hidden;
+  margin-top: var(--space-1);
+  font-size: var(--step-3);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reveal__statement {
+  margin-left: var(--space-4);
+  font-size: var(--step-0);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-2);
+}
+
+.reveal__thumb {
+  flex: none;
+  height: calc(var(--band-h) - 1rem);
+}
+
+.reveal__thumb svg {
+  width: auto;
+  height: 100%;
+}
+
+@media (width < 40rem) {
+  .reveal__statement,
+  .reveal__thumb {
+    display: none;
+  }
+}
+
+/* IAM poster */
+.poster__gate {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.22);
+  stroke-width: 0.5;
+}
+
+.poster__gate--pass {
+  stroke: var(--accent);
+}
+
+.poster__gate--fail {
+  stroke: var(--pending);
+  stroke-width: 0.8;
+}
+
+.poster__door {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 0.6;
+}
+
+.poster__door--shut {
+  fill: var(--surface);
+  stroke: var(--pending);
+}
+
+.poster__resource {
+  fill: #12233a;
+  stroke: color-mix(in srgb, var(--accent) 75%, transparent);
+  stroke-width: 0.3;
+}
+
+.poster__card--pass {
+  fill: var(--surface);
+  stroke: color-mix(in srgb, var(--accent) 82%, transparent);
+  stroke-width: 0.35;
+}
+
+.poster__ring-track {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.15);
+  stroke-width: 0.6;
+}
+
+.poster__ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 0.7;
+}
+
+.poster__vault {
+  fill: #1c252e;
+  stroke: color-mix(in srgb, var(--accent) 75%, transparent);
+  stroke-width: 0.3;
+}
+
+.poster__token {
+  stroke: none;
+}
+
+.poster__token--pass {
+  fill: var(--accent);
+}
+
+.poster__token--fail {
+  fill: var(--pending);
+}
+
+.poster--iam .poster__text {
+  font-size: 2.6px;
+}
+
+/* Poster motion: the 2D pictures breathe a little, so a role never looks
+   frozen before 3D starts, without WebGL, or in the switcher preview.
+   Opacity and transform only; off with reduced motion, with the Animation
+   switch, and once 3D has taken over. */
+@media (prefers-reduced-motion: no-preference) {
+  .poster__events path {
+    animation: poster-flow 4.8s linear infinite;
+  }
+
+  .poster__events path:nth-child(3n + 2) {
+    animation-delay: -1.6s;
+  }
+
+  .poster__events path:nth-child(3n) {
+    animation-delay: -3.2s;
+  }
+
+  .poster__node--alert,
+  .poster__token,
+  .poster__rec {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: poster-pulse 2.4s var(--ease) infinite;
+  }
+
+  /* The countdown arc turns about its circle's centre (IamPoster: 65, 8.5). */
+  .poster__ring {
+    transform-box: view-box;
+    transform-origin: 65px 8.5px;
+    animation: poster-spin 14s linear infinite;
+  }
+
+  .poster__gate--fail,
+  .poster__door--shut,
+  .poster__text--alert {
+    animation: poster-warn 2.4s var(--ease) infinite;
+  }
+
+  /* GRC meter: a light wave climbs the full meter, bottom to top. */
+  .poster__meter .poster__seg {
+    animation: poster-wave 3.2s var(--ease) infinite;
+  }
+
+  .poster__meter .poster__seg:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+  .poster__meter .poster__seg:nth-child(3) {
+    animation-delay: 0.24s;
+  }
+  .poster__meter .poster__seg:nth-child(4) {
+    animation-delay: 0.36s;
+  }
+  .poster__meter .poster__seg:nth-child(5) {
+    animation-delay: 0.48s;
+  }
+  .poster__meter .poster__seg:nth-child(6) {
+    animation-delay: 0.6s;
+  }
+  .poster__meter .poster__seg:nth-child(7) {
+    animation-delay: 0.72s;
+  }
+  .poster__meter .poster__seg:nth-child(8) {
+    animation-delay: 0.84s;
+  }
+  .poster__meter .poster__seg:nth-child(9) {
+    animation-delay: 0.96s;
+  }
+  .poster__meter .poster__seg:nth-child(10) {
+    animation-delay: 1.08s;
+  }
+
+  html[data-motion="off"] .poster *,
+  .is-3d .role__poster .poster * {
+    animation: none;
+  }
+}
+
+@keyframes poster-flow {
+  0% {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+
+  20%,
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(4px);
+  }
+}
+
+@keyframes poster-pulse {
+  50% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes poster-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes poster-wave {
+  0%,
+  60%,
+  100% {
+    opacity: 1;
+  }
+
+  30% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes poster-warn {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* GRC poster */
+.poster__fw {
+  fill: var(--surface);
+  stroke: rgb(255 255 255 / 0.2);
+  stroke-width: 0.3;
+}
+
+.poster__fw--lit {
+  stroke: var(--accent);
+}
+
+.poster__cell {
+  fill: #121a22;
+  stroke: color-mix(in srgb, var(--accent) 90%, transparent);
+  stroke-width: 0.3;
+}
+
+.poster__link {
+  stroke: color-mix(in srgb, var(--accent) 90%, transparent);
+  stroke-width: 0.4;
+}
+
+.poster__seg {
+  fill: color-mix(in srgb, var(--accent) 100%, transparent);
+}
+
+.poster--grc .poster__text {
+  font-size: 2.4px;
+}
+
+.poster--grc .poster__text--big {
+  font-size: 6px;
+  fill: var(--accent-text);
+}

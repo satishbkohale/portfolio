@@ -17,17 +17,8 @@ const FALLBACKS = {
 };
 
 const FONTS = [
-  ['Newsreader', 'node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2', 'Georgia'],
-  [
-    'Atkinson Hyperlegible Next',
-    'node_modules/@fontsource-variable/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-wght-normal.woff2',
-    'Arial',
-  ],
-  [
-    'Atkinson Hyperlegible Mono',
-    'node_modules/@fontsource-variable/atkinson-hyperlegible-mono/files/atkinson-hyperlegible-mono-latin-wght-normal.woff2',
-    'Courier New',
-  ],
+  ['Geist', 'node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2', 'Arial'],
+  ['Geist Mono', 'node_modules/@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2', 'Courier New'],
 ];
 
 const pct = (v) => `${(v * 100).toFixed(2)}%`;

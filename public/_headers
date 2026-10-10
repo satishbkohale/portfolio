@@ -1,4 +1,5 @@
 # Security and cache headers for Cloudflare Workers static assets.
+# Vercel does not read this file: vercel.json carries the same headers.
 # Rules for every path a request matches are merged, and duplicate header
 # names are joined with commas, so each header is set in exactly one rule.
 # Two comma-joined CSPs would be two policies, both enforced. A route that

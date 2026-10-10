@@ -39,6 +39,8 @@ const projects = defineCollection({
     links: z.array(z.object({ label: z.string(), href: z.url() })).default([]),
     /** Free text such as "2025" or "Mar 2026". */
     date: z.string().optional(),
+    /** Icon for the card header (see src/components/Icon.astro). */
+    icon: z.enum(['mail', 'link', 'key', 'shield-check', 'activity']).default('shield-check'),
     featured: z.boolean().default(false),
     order: z.number().int().default(100),
     draft: z.boolean().default(false),

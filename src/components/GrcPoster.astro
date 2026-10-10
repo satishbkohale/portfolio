@@ -1,0 +1,37 @@
+---
+/**
+ * GRC poster: the 2D picture of the "Govern" scene in its final pose.
+ * Framework row (ISO/IEC 27001 themes, NIST CSF functions), a 5 x 4 matrix of
+ * risk, control, policy and evidence (the former gap closed), and the coverage
+ * meter full at 100%. Shown before 3D starts, without WebGL, and in the
+ * switcher band. Decorative; the page text tells the same story. Sample IDs.
+ */
+const iso = ['A.5', 'A.6', 'A.7', 'A.8'];
+const csf = ['GV', 'ID', 'PR', 'DE', 'RS', 'RC'];
+const isoLit = [true, true, false, true];
+const csfLit = [true, true, true, true, false, false];
+const rows = [0, 1, 2, 3, 4];
+const cols = [8, 24, 40, 56];
+---
+
+<svg class="poster poster--grc" viewBox="0 0 100 80" aria-hidden="true" focusable="false">
+  {iso.map((_, i) => <rect class:list={['poster__fw', isoLit[i] && 'poster__fw--lit']} x={14 + i * 12} y="4" width="10" height="5" rx="0.8" />)}
+  {csf.map((_, i) => <rect class:list={['poster__fw', csfLit[i] && 'poster__fw--lit']} x={10 + i * 9} y="11" width="7.5" height="5" rx="0.8" />)}
+  <g class="poster__text poster__text--dim">
+    {iso.map((t, i) => <text x={19 + i * 12} y="7.6" text-anchor="middle">{t}</text>)}
+    {csf.map((t, i) => <text x={13.75 + i * 9} y="14.6" text-anchor="middle">{t}</text>)}
+  </g>
+  {
+    rows.map((r) =>
+      cols.map((x) => <rect class="poster__cell" x={x} y={24 + r * 10} width="14" height="6" rx="0.8" />),
+    )
+  }
+  {rows.map((r) => <path class="poster__link" d={`M22 ${27 + r * 10}h2M38 ${27 + r * 10}h2M54 ${27 + r * 10}h2`} />)}
+  <g class="poster__meter">
+    {Array.from({ length: 10 }, (_, k) => <rect class="poster__seg" x="80" y={70 - k * 5} width="10" height="3.6" rx="0.6" />)}
+  </g>
+  <g class="poster__text">
+    <text class="poster__text--big" x="85" y="18" text-anchor="middle">100%</text>
+    <text class="poster__text--dim" x="85" y="22" text-anchor="middle">COVERAGE</text>
+  </g>
+</svg>

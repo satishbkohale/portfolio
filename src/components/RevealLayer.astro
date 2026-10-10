@@ -1,0 +1,49 @@
+---
+/**
+ * Switcher reveal layer. The target role sits "underneath" the page and is
+ * uncovered by a mask that grows down from the switcher bar (never a slide).
+ * The mask is two opposite transforms: the outer box moves up while its
+ * content moves down by the same amount, so the content stays still on screen
+ * and only the edge travels. Transforms run on the compositor, so the layer is
+ * painted once instead of on every frame (as a clip-path animation would be).
+ *
+ *   band    hover or focus: a thin strip with the role's name, headline and
+ *           a slice of its scene; the page below dims lightly
+ *   cover   click: the clip expands until the role fills the screen
+ *   fade    the real role page is now underneath, aligned; the layer fades
+ * Driven by scripts/roles.ts. Hidden from assistive tech; the switch itself
+ * is announced through a live region.
+ */
+import RolePoster from './RolePoster.astro';
+import { ROLE_ORDER, roles } from '../data/roles';
+import RolePreview from './RolePreview.astro';
+---
+
+<div class="reveal" data-reveal-layer data-state="closed" aria-hidden="true">
+  <div class="reveal__dim"></div>
+  <div class="reveal__clip" data-reveal-clip>
+    <div class="reveal__inner">
+    {
+      ROLE_ORDER.map((r, i) => (
+        <div class="reveal__role" data-reveal-role={r} data-role={r}>
+          <RolePreview role={r} />
+          <div class="reveal__band container">
+            <div class="reveal__band-text">
+              <p class="reveal__kicker">
+                <span class="role__num">{String(i + 1).padStart(2, '0')}</span>
+                {roles[r].short} · {roles[r].name}
+              </p>
+              <p class="reveal__headline">
+                {roles[r].headline}
+                <span class="reveal__statement">{roles[r].statement}</span>
+              </p>
+            </div>
+            <div class="reveal__thumb"><RolePoster role={r} /></div>
+          </div>
+        </div>
+      ))
+    }
+    </div>
+  </div>
+  <div class="reveal__edge"></div>
+</div>

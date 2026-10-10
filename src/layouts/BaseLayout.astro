@@ -5,11 +5,11 @@
  * The JSON-LD block is a data block (not executed), which CSP permits.
  */
 import '../styles/global.css';
-import monoUrl from '@fontsource-variable/atkinson-hyperlegible-mono/files/atkinson-hyperlegible-mono-latin-wght-normal.woff2?url';
-import bodyUrl from '@fontsource-variable/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-wght-normal.woff2?url';
-import displayUrl from '@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url';
+import bodyUrl from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import monoUrl from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import type { RoleId } from '../data/roles';
 import { site } from '../data/site';
 import { includeDrafts } from '../lib/content';
 
@@ -22,9 +22,11 @@ interface Props {
   jsonLd?: Record<string, unknown>;
   /** Developer notes listing missing facts; shown only in non-production builds. */
   todo?: string[];
+  /** Active role on the home pages; marks the header switcher. */
+  role?: RoleId | undefined;
 }
 
-const { title, description, ogType = 'website', noindex = false, jsonLd, todo = [] } = Astro.props;
+const { title, description, ogType = 'website', noindex = false, jsonLd, todo = [], role } = Astro.props;
 
 const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | ${site.headline}`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -34,7 +36,7 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : nu
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-switcher={role ? '' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -43,15 +45,14 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : nu
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#0d1114" />
+    <meta name="theme-color" content="#07090c" />
     <meta name="author" content={site.name} />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- The three upright fonts all appear above the fold. -->
-    <link rel="preload" href={displayUrl} as="font" type="font/woff2" crossorigin />
+    <!-- Both upright fonts appear above the fold. -->
     <link rel="preload" href={bodyUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
 
@@ -70,7 +71,7 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : nu
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <SiteHeader />
+    <SiteHeader role={role} />
     <main id="main" tabindex="-1">
       {
         includeDrafts && todo.length > 0 && (

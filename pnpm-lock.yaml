@@ -174,7 +174,7 @@ importers:
         specifier: ^7.3.5
         version: 7.3.5(@types/node@26.6.4)(yaml@2.9.1)
       three:
-        specifier: ^0.186.1
+        specifier: 0.186.1
         version: 0.186.1
     devDependencies:
       '@astrojs/check':
@@ -186,13 +186,10 @@ importers:
       '@biomejs/biome':
         specifier: ^2.5.15
         version: 2.5.15
-      '@fontsource-variable/atkinson-hyperlegible-mono':
+      '@fontsource-variable/geist':
         specifier: ^5.3.0
         version: 5.3.0
-      '@fontsource-variable/atkinson-hyperlegible-next':
-        specifier: ^5.3.0
-        version: 5.3.0
-      '@fontsource-variable/newsreader':
+      '@fontsource-variable/geist-mono':
         specifier: ^5.3.0
         version: 5.3.0
       '@playwright/test':
@@ -870,14 +867,11 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@fontsource-variable/atkinson-hyperlegible-mono@5.3.0':
-    resolution: {integrity: sha512-0IbthhO18EEpLe69h+cmrsxCkl4yk80gMk+fAN3+9M5zQvoR1JlkzoJRR6U9/UXLYpVBGEXu+Md2LO8TIp30dw==}
+  '@fontsource-variable/geist-mono@5.3.0':
+    resolution: {integrity: sha512-vBbuwDEo9AkrqADMXOrlAR3DFcJi4/JxeuU43FoiQERnNwsfXNnvxvReZG02cQKmyk4DZkZdBZX3oTDvy2zBAw==}
 
-  '@fontsource-variable/atkinson-hyperlegible-next@5.3.0':
-    resolution: {integrity: sha512-UnLzNUy1RWoLDfydAatP4NaRm99X/WbQEph7q/PymJnCFIOOwKOx3pBmp5ys8trO0dM+CKGuJgeZP9fAR4mQpA==}
-
-  '@fontsource-variable/newsreader@5.3.0':
-    resolution: {integrity: sha512-rrzYi43qMpbzwuFtf9OkWH8sxAPVPcQQQEwXpPtwaKYeJ8yVg5aLs5kawmo1f2Q1t1M38TLmEKCkGVDsYwgdFw==}
+  '@fontsource-variable/geist@5.3.0':
+    resolution: {integrity: sha512-j0m+vLQuG5XAYoHtGCVu0spvlGreR3EzpECUVzkFmI1mTVnAO38l/NEPDCFgZ177JxzYJCLSmTQibIiYPilGrA==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -2906,11 +2900,9 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@fontsource-variable/atkinson-hyperlegible-mono@5.3.0': {}
+  '@fontsource-variable/geist-mono@5.3.0': {}
 
-  '@fontsource-variable/atkinson-hyperlegible-next@5.3.0': {}
-
-  '@fontsource-variable/newsreader@5.3.0': {}
+  '@fontsource-variable/geist@5.3.0': {}
 
   '@img/colour@1.1.0': {}
 

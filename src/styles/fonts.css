@@ -3,9 +3,8 @@
  * the external stylesheet, so no inline <style> is needed).
  * Only the Latin files are downloaded for English text (unicode-range).
  */
-@import "@fontsource-variable/newsreader/wght.css";
-@import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
-@import "@fontsource-variable/atkinson-hyperlegible-mono/wght.css";
+@import "@fontsource-variable/geist/wght.css";
+@import "@fontsource-variable/geist-mono/wght.css";
 
 /*
  * Metric-matched fallbacks: while the web fonts load, local fonts are scaled
@@ -14,28 +13,19 @@
  * Safari ignores the *-override descriptors; size-adjust still applies.
  */
 @font-face {
-  font-family: "Newsreader Fallback";
-  src: local("Georgia");
-  size-adjust: 96.12%;
-  ascent-override: 76.47%;
-  descent-override: 27.57%;
-  line-gap-override: 0%;
-}
-
-@font-face {
-  font-family: "Atkinson Next Fallback";
+  font-family: "Geist Fallback";
   src: local("Arial");
-  size-adjust: 100.59%;
-  ascent-override: 97.83%;
-  descent-override: 31.42%;
+  size-adjust: 105.8%;
+  ascent-override: 94.99%;
+  descent-override: 27.88%;
   line-gap-override: 0%;
 }
 
 @font-face {
-  font-family: "Atkinson Mono Fallback";
+  font-family: "Geist Mono Fallback";
   src: local("Courier New");
-  size-adjust: 105.32%;
-  ascent-override: 93.43%;
-  descent-override: 30%;
+  size-adjust: 99.98%;
+  ascent-override: 100.52%;
+  descent-override: 29.5%;
   line-gap-override: 0%;
 }

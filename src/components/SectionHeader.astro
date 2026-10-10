@@ -1,18 +1,20 @@
 ---
-/** Section heading, numbered like the clauses of a standards document. */
+/** Section heading: numbered mono label (a node on the scroll rail), the title, and an optional one-line intro. */
 interface Props {
-  num: string;
+  num?: string | undefined;
+  kicker: string;
   title: string;
   id: string;
   intro?: string | undefined;
 }
-const { num, title, id, intro } = Astro.props;
+const { num, kicker, title, id, intro } = Astro.props;
 ---
 
-<header class="section-header">
-  <p class="section-header__num" aria-hidden="true">{num}</p>
-  <div>
-    <h2 class="section-header__title" id={id}>{title}</h2>
-    {intro && <p class="section-header__intro">{intro}</p>}
-  </div>
+<header class="section-header" data-reveal>
+  <p class="section-header__kicker">
+    {num && <span class="section-header__num">{num}</span>}
+    {kicker}
+  </p>
+  <h2 class="section-header__title" id={id}>{title}</h2>
+  {intro && <p class="section-header__intro">{intro}</p>}
 </header>

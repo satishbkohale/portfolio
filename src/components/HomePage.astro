@@ -1,34 +1,38 @@
 ---
 /**
- * Homepage, shared by "/" (all roles) and the role pages /grc/, /iam/, /soc/.
- * Role pages reuse the same content with role-first ordering and copy.
+ * Home pages: "/" and the role URLs /soc/, /iam/, /grc/.
  *
- * Order: hero, selected work (evidence first), about (the zero-trust idea),
- * skills, certifications, education, contact.
+ *   hero     "/" gets the full pinned "Encrypt and lock" hero; the role URLs
+ *            get a compact, still hero so the role content shows straight away.
+ *   roles    all three role panes are in the HTML; the URL's role is active
+ *            and the others are hidden. The header switcher swaps them in
+ *            place (scripts/roles.ts) with real URLs and history.
+ *   shared   Work, Evidence, Background and Contact, the same for every role.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { ROLE_IDS, type RoleId, roles } from '../data/roles';
+import { DEFAULT_ROLE, ROLE_ORDER, type RoleId, roles } from '../data/roles';
 import { site } from '../data/site';
-import { getCertifications, getEducation, getExperience, getProjects, sortForRole } from '../lib/content';
-import CertList from './CertList.astro';
-import ContactChannels from './ContactChannels.astro';
-import CoverageTable from './CoverageTable.astro';
-import Figure from './figure/Figure.astro';
+import { getEducation, getExperience, getProjects, sortForRole } from '../lib/content';
+import EvidenceLog from './EvidenceLog.astro';
+import HeroLock from './HeroLock.astro';
 import Icon from './Icon.astro';
+import RevealLayer from './RevealLayer.astro';
 import ProjectList from './ProjectList.astro';
+import RolePane from './RolePane.astro';
 import SectionHeader from './SectionHeader.astro';
-import SkillsMatrix from './SkillsMatrix.astro';
 import Timeline from './Timeline.astro';
 
 interface Props {
+  /** Set on /soc/, /iam/ and /grc/; "/" shows the default role with the full hero. */
   role?: RoleId | undefined;
 }
 const { role } = Astro.props;
+const active = role ?? DEFAULT_ROLE;
+const fullHero = !role;
 const info = role ? roles[role] : undefined;
 
-const projects = sortForRole(await getProjects(), role);
-const featured = projects.filter((p) => p.data.featured).slice(0, 4);
-const certs = await getCertifications();
+const projects = sortForRole(await getProjects(), active);
+const featured = projects.filter((p) => p.data.featured).slice(0, 5);
 const education = await getEducation();
 const experience = await getExperience();
 
@@ -41,191 +45,240 @@ const jsonLd = {
   mainEntity: {
     '@type': 'Person',
     name: site.name,
-    jobTitle: info ? info.heroRole.replace(/\.$/, '') : 'Entry-level security analyst',
+    jobTitle: site.roleLine,
     address: { '@type': 'PostalAddress', addressLocality: 'Pune', addressCountry: 'IN' },
-    knowsAbout: ['Identity and access management', 'Privileged access management', 'Security operations', 'Governance, risk and compliance'],
+    knowsAbout: ['Security operations', 'Identity and access management', 'Privileged access management', 'Governance, risk and compliance'],
     ...(sameAs.length > 0 ? { sameAs } : {}),
   },
 };
 
-const lenses = [{ href: '/', label: 'All roles', id: undefined }, ...ROLE_IDS.map((r) => ({ href: `/${r}/`, label: roles[r].short, id: r }))];
-const resumeHref = '/resume/';
+const eyebrow = `${site.availability} · Pune, IN`;
+
+/** Hero sequence: stage ids are read by src/three/hero.ts; `at` is scroll progress. */
+const heroStages = [
+  { id: 'plaintext', at: 0, label: 'Plaintext', caption: 'Sample records travel in the open. Anyone who intercepts them can read them.' },
+  { id: 'encrypting', at: 0.12, label: 'Encrypt', caption: 'Each record is encrypted. Without the key, the characters mean nothing.' },
+  { id: 'compress', at: 0.45, label: 'Compress', caption: 'The ciphertext is sealed into one encrypted block.' },
+  { id: 'lock', at: 0.64, label: 'Lock', caption: 'The block goes into storage that only an authorised key can open.' },
+  { id: 'locked', at: 0.86, label: 'Locked', caption: 'The data stays private, even if the storage is stolen.' },
+];
+
+const { linkedin, github } = site.links;
 ---
 
-<BaseLayout title={info?.pageTitle} description={description} ogType="profile" jsonLd={jsonLd}>
-  <!-- 1. Hero -->
+<BaseLayout title={info?.pageTitle} description={description} ogType="profile" jsonLd={jsonLd} role={active}>
+  {
+    fullHero ? (
+      <>
+  <!-- Hero: chapter 0, "Encrypt and lock". The track gives the scroll
+       distance; the pin stays on screen while the 3D sequence plays. -->
   <section class="hero" aria-labelledby="hero-title">
-    <div class="container hero__grid">
-      <div class="hero__text">
-        <h1 class="hero__name" id="hero-title">{site.name}</h1>
-        <p class="hero__role">{info?.heroRole ?? site.roleLine}</p>
-        <p class="hero__value">{info?.heroValue ?? site.valueStatement}</p>
-
-        <ul class="proof" aria-label="Highlights">
-          {
-            site.proofFacts.map((fact) => (
-              <li class="proof__item">
-                <Icon name="check" size={16} />
-                <span>{fact}</span>
-              </li>
-            ))
-          }
-        </ul>
-
-        <div class="hero__actions">
-          <a class="button button--primary" href={resumeHref}>
-            <Icon name="file-text" />
-            <span>View resume</span>
-          </a>
-          <a class="button button--secondary" href="#work">
-            <span>Selected work</span>
-            <Icon name="arrow-right" />
-          </a>
-        </div>
-
-        <dl class="doc-control">
-          <div class="doc-control__row">
-            <dt>Education</dt>
-            <dd>{site.education.summary}{site.education.graduation ? `, graduating ${site.education.graduation}` : ''}</dd>
+    <div class="hero__track" data-chapter="hero" data-stages={heroStages.map((s) => `${s.id}:${s.at}`).join(',')}>
+      <div class="hero__pin" data-pin>
+        <div class="container hero__grid">
+          <div class="hero__text">
+            <p class="hero__eyebrow">
+              <span class="hero__pulse" aria-hidden="true"></span>
+              <span class="visually-hidden">{eyebrow}</span>
+              <span aria-hidden="true" data-decrypt>{eyebrow}</span>
+            </p>
+            <p class="hero__name">{site.name}</p>
+            <h1 class="hero__title" id="hero-title">{site.heroTitle}</h1>
+            <p class="hero__lede">{info?.heroValue ?? site.valueStatement}</p>
+            <div class="hero__actions">
+              <a class="button button--primary" href="/resume/">
+                <Icon name="lock" size={16} />
+                <span>View resume</span>
+                <Icon name="arrow-right" />
+              </a>
+              <a class="button button--secondary" href="#contact">
+                <span>Get in touch</span>
+              </a>
+            </div>
+            <ul class="hero__facts" aria-label="Highlights">
+              {site.proofFacts.map((fact) => <li>{fact}</li>)}
+            </ul>
           </div>
-          <div class="doc-control__row">
-            <dt>Location</dt>
-            <dd>{site.location}</dd>
+          <div class="hero__visual" data-pin>
+            <HeroLock />
+            <ol class="sequence" aria-label="Encryption sequence">
+              {
+                heroStages.map((s, i) => (
+                  <li class="sequence__step" data-step={s.id}>
+                    <span class="sequence__num">{String(i + 1).padStart(2, '0')}</span>
+                    <span class="sequence__label">{s.label}</span>
+                  </li>
+                ))
+              }
+            </ol>
           </div>
-          <div class="doc-control__row">
-            <dt>Roles</dt>
-            <dd>{site.rolesOpenTo}</dd>
-          </div>
-          <div class="doc-control__row">
-            <dt>Status</dt>
-            <dd>{site.availability}</dd>
-          </div>
-        </dl>
-
-        <nav class="lens" aria-label="View by role">
-          <span class="lens__label">View by role</span>
-          <ul class="lens__list">
+          <ol class="captions" aria-label="What the animation shows">
             {
-              lenses.map((l) => (
-                <li>
-                  <a href={l.href} aria-current={l.id === role ? 'page' : undefined}>
-                    {l.label}
-                  </a>
+              heroStages.map((s, i) => (
+                <li class="captions__item" data-step={s.id}>
+                  <span class="captions__num" aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <p>
+                    <strong>{s.label}.</strong> {s.caption}
+                  </p>
                 </li>
               ))
             }
-          </ul>
-        </nav>
-      </div>
-
-      <div class="hero__figure">
-        <Figure variant="hero" emphasis={info?.channel} />
-      </div>
-    </div>
-  </section>
-
-  <!-- 2. Selected work -->
-  <section class="section" id="work" aria-labelledby="work-title">
-    <div class="container">
-      <SectionHeader num="1" id="work-title" title="Selected work" intro="Projects with what I did and what came out of it. Each one links to a short case study." />
-      <ProjectList projects={featured} />
-      <CoverageTable projects={projects} highlight={role} />
-      <p class="section__more">
-        <a class="text-link" href="/projects/">All projects and labs<Icon name="arrow-right" size={16} /></a>
-      </p>
-    </div>
-  </section>
-
-  <!-- 3. About: the zero-trust idea, told step by step beside Fig. 2 -->
-  <section class="section story" id="about" aria-labelledby="about-title">
-    <div class="container story__grid">
-      <div class="story__text">
-        <SectionHeader num="2" id="about-title" title="About" />
-        <p class="story__intro">
-          I am a final-year B.Tech Computer Science and Engineering student at Nutan College of Engineering and Research, Pune, looking for an
-          entry-level role in GRC, IAM or SOC L1.
-        </p>
-
-        <div class="story__steps">
-          <p class="story__step" data-beat="1">
-            Zero trust treats each access request as a decision. A request reaches an enforcement point and waits there until the decision is made.
-          </p>
-          <div class="story__step" data-beat="2" data-channel="policy">
-            <h3 class="story__channel">Policy <span class="story__role">(GRC): what is allowed</span></h3>
-            <p>
-              My awareness platform automates the phishing simulations and follow-up emails that a security awareness programme needs. ISO/IEC
-              27001 lists this kind of control under awareness, education and training.
-            </p>
-          </div>
-          <div class="story__step" data-beat="3" data-channel="identity">
-            <h3 class="story__channel">Identity <span class="story__role">(IAM): who is asking</span></h3>
-            <p>
-              I completed CyberArk University's introductions to privileged access management and identity security: vaults, safes, credential
-              rotation and session isolation. My grounding is in Active Directory and LDAP.
-            </p>
-          </div>
-          <div class="story__step" data-beat="4" data-channel="activity">
-            <h3 class="story__channel">Activity <span class="story__role">(SOC): what is happening</span></h3>
-            <p>
-              I built a classifier that flags malicious URLs from their length, special characters, domain patterns and entropy. I study detection
-              through MITRE ATT&amp;CK and the Cyber Kill Chain.
-            </p>
-          </div>
-          <p class="story__step" data-beat="5">
-            When the three inputs agree, the policy engine grants access, and the enforcement point opens a path with no more privilege than the
-            task needs.
-          </p>
-          <p class="story__step" data-beat="6">
-            The decision is not final. If new activity looks wrong, the session can be re-evaluated and closed. That loop between policy, identity
-            and activity is the work I want to do.
-          </p>
+          </ol>
+        </div>
+        <div class="container hero__foot">
+          <a class="hero__scroll" href={`#${active}`}>
+            <span class="hero__scroll-line" aria-hidden="true"></span>
+            Scroll
+          </a>
+          <label class="motion-switch">
+            <input class="motion-switch__input" type="checkbox" role="switch" checked data-motion-toggle />
+            <span class="motion-switch__track" aria-hidden="true"></span>
+            <span>Animation</span>
+          </label>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="story__figure">
-        <Figure variant="story" emphasis={info?.channel} />
+      </>
+    ) : (
+      <>
+  <!-- Compact hero on the role URLs: the flat lock with its 2D loops, no pinned scroll. -->
+  <section class="hero hero--compact" aria-labelledby="hero-title">
+    <div class="container hero__grid">
+          <div class="hero__text">
+            <p class="hero__eyebrow">
+              <span class="hero__pulse" aria-hidden="true"></span>
+              <span class="visually-hidden">{eyebrow}</span>
+              <span aria-hidden="true" data-decrypt>{eyebrow}</span>
+            </p>
+            <p class="hero__name">{site.name}</p>
+            <h1 class="hero__title" id="hero-title">{site.heroTitle}</h1>
+            <p class="hero__lede">{info?.heroValue ?? site.valueStatement}</p>
+            <div class="hero__actions">
+              <a class="button button--primary" href="/resume/">
+                <Icon name="lock" size={16} />
+                <span>View resume</span>
+                <Icon name="arrow-right" />
+              </a>
+              <a class="button button--secondary" href="#contact">
+                <span>Get in touch</span>
+              </a>
+            </div>
+            <ul class="hero__facts" aria-label="Highlights">
+              {site.proofFacts.map((fact) => <li>{fact}</li>)}
+            </ul>
+          </div>
+          <div class="hero__visual">
+            <HeroLock compact />
+            <label class="motion-switch hero__motion">
+              <input class="motion-switch__input" type="checkbox" role="switch" checked data-motion-toggle />
+              <span class="motion-switch__track" aria-hidden="true"></span>
+              <span>Animation</span>
+            </label>
+          </div>
+    </div>
+  </section>
+      </>
+    )
+  }
+
+  <!-- Role section: the header switcher swaps these panes. -->
+  <div class="roles" data-roles data-active={active}>
+    {ROLE_ORDER.map((r) => <RolePane role={r} active={r === active} />)}
+  </div>
+  <p class="visually-hidden" aria-live="polite" data-role-announce></p>
+  <RevealLayer />
+
+  <div class="story" data-story>
+    <!-- Work -->
+    <section class="story__section" id="work" aria-labelledby="work-title" data-rail>
+      <div class="container story__inner">
+        <SectionHeader num="01" kicker="Work" id="work-title" title="Things I've built." />
+        <ProjectList projects={featured} />
+        <p class="section__more">
+          <a class="text-link" href="/projects/">All projects and labs<Icon name="arrow-right" size={16} /></a>
+        </p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- 4. Skills -->
-  <section class="section" id="skills" aria-labelledby="skills-title">
-    <div class="container">
-      <SectionHeader
-        num="3"
-        id="skills-title"
-        title="Skills"
-        intro="Each skill is labelled by how I have used it, and links to the project or certificate that shows it."
-      />
-      <SkillsMatrix role={role} />
-    </div>
-  </section>
+    <!-- Evidence -->
+    <section class="story__section" id="evidence" aria-labelledby="evidence-title" data-rail>
+      <div class="container story__inner">
+        <SectionHeader num="02" kicker="Evidence" id="evidence-title" title="Proof, not adjectives." />
+        <EvidenceLog role={role} />
+      </div>
+    </section>
 
-  <!-- 5. Certifications -->
-  <section class="section" id="certifications" aria-labelledby="certs-title">
-    <div class="container">
-      <SectionHeader num="4" id="certs-title" title="Certifications and learning" />
-      <CertList certs={certs} role={role} />
-    </div>
-  </section>
+    <!-- Background -->
+    <section class="story__section" id="background" aria-labelledby="background-title" data-rail>
+      <div class="container story__inner">
+        <SectionHeader
+          num="03"
+          kicker="Background"
+          id="background-title"
+          title={experience.length > 0 ? 'Experience and education.' : 'Education.'}
+        />
+        <div data-reveal>
+          <Timeline experience={experience} education={education} />
+        </div>
+      </div>
+    </section>
 
-  <!-- 6. Education (and experience when there is some) -->
-  <section class="section" id="education" aria-labelledby="education-title">
-    <div class="container">
-      <SectionHeader num="5" id="education-title" title={experience.length > 0 ? 'Experience and education' : 'Education'} />
-      <Timeline experience={experience} education={education} />
-    </div>
-  </section>
-
-  <!-- 7. Contact -->
-  <section class="section" id="contact" aria-labelledby="contact-title">
-    <div class="container">
-      <SectionHeader num="6" id="contact-title" title="Contact" />
-      <ContactChannels />
-    </div>
-  </section>
+    <!-- Contact -->
+    <section class="story__section contact" id="contact" aria-labelledby="contact-title" data-rail>
+      <div class="container story__inner">
+        <SectionHeader num="04" kicker="Contact" id="contact-title" title="Let's talk." />
+        <div class="contact-channels contact__body" data-reveal>
+          <p class="contact__lede">Open to {site.rolesOpenTo}.</p>
+          <p class="contact__secure">
+            <svg class="contact__lock" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+            </svg>
+            <a class="contact__email" href={`mailto:${site.email}`}>{site.email}</a>
+          </p>
+          <div class="contact__row">
+            <a class="button button--primary" href={`mailto:${site.email}`}>
+              <Icon name="mail" />
+              <span>Email me</span>
+            </a>
+            <a class="button button--secondary" href={site.resumePdf.general ?? '/resume/'}>
+              <Icon name={site.resumePdf.general ? 'download' : 'file-text'} />
+              <span>{site.resumePdf.general ? 'Download resume' : 'Resume'}</span>
+            </a>
+            <button class="button button--secondary" type="button" data-copy={site.email} hidden>
+              <Icon name="copy" />
+              <span data-copy-label>Copy address</span>
+            </button>
+            {
+              linkedin && (
+                <a class="button button--secondary" href={linkedin} rel="noopener noreferrer">
+                  LinkedIn
+                  <Icon name="arrow-up-right" size={16} />
+                </a>
+              )
+            }
+            {
+              github && (
+                <a class="button button--secondary" href={github} rel="noopener noreferrer">
+                  GitHub
+                  <Icon name="arrow-up-right" size={16} />
+                </a>
+              )
+            }
+          </div>
+          <p class="contact-channels__status" role="status" data-copy-status></p>
+        </div>
+      </div>
+    </section>
+  </div>
 </BaseLayout>
 
 <script>
-  import '../scripts/figure';
+  import '../scripts/copy';
+  import '../scripts/home';
+  import '../scripts/roles';
 </script>

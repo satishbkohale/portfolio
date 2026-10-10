@@ -1,0 +1,58 @@
+---
+/**
+ * IAM poster: the 2D picture of the "Control" scene in its final pose.
+ * Top lane (pass): four gates lit mint, the door open, a time-limited session
+ * that is vaulted and recorded. Bottom lane (fail): the same user on an
+ * unmanaged device, stopped amber at the posture gate, door shut.
+ * Shown before 3D starts, without WebGL, and in the switcher band.
+ * Decorative; the page text tells the same story. Sample data only.
+ */
+const gates = [
+  { x: 16, label: 'MFA' },
+  { x: 29, label: 'DEVICE' },
+  { x: 42, label: 'PRIVILEGE' },
+  { x: 55, label: 'CONDITIONAL' },
+];
+const frame = (x: number, y: number) => `M${x - 2} ${y - 9}l4 -2v16l-4 2z`;
+---
+
+<svg class="poster poster--iam" viewBox="0 0 100 80" aria-hidden="true" focusable="false">
+  <g class="poster__faint">
+    <path d="M4 40h66M4 72h66"></path>
+  </g>
+
+  <!-- Pass lane -->
+  {gates.map((g) => <path class="poster__gate poster__gate--pass" d={frame(g.x, 38)} />)}
+  <g class="poster__text poster__text--dim">
+    {
+      // Two rows, alternating, so the long labels never touch.
+      gates.map((g, i) => (
+        <text x={g.x} y={i % 2 ? 18 : 22} text-anchor="middle">
+          {g.label}
+        </text>
+      ))
+    }
+  </g>
+  <path class="poster__door" d="M68 24v-6h6v6M68 40v4h6v-4"></path>
+  <rect class="poster__resource" x="78" y="30" width="9" height="3" rx="0.8"></rect>
+  <rect class="poster__resource" x="78" y="34" width="9" height="3" rx="0.8"></rect>
+  <rect class="poster__resource" x="78" y="38" width="9" height="3" rx="0.8"></rect>
+  <rect class="poster__card poster__card--pass" x="60" y="3" width="34" height="11" rx="1.5"></rect>
+  <circle class="poster__ring-track" cx="65" cy="8.5" r="3"></circle>
+  <path class="poster__ring" d="M65 5.5a3 3 0 1 1 -2.6 4.5"></path>
+  <g class="poster__text">
+    <text x="70" y="8">SESSION 15:00</text>
+    <text class="poster__text--accent" x="70" y="12">vaulted · recorded</text>
+  </g>
+  <rect class="poster__vault" x="89" y="31" width="7" height="6" rx="1"></rect>
+  <circle class="poster__token poster__token--pass" cx="64" cy="34" r="2.2"></circle>
+
+  <!-- Fail lane -->
+  {gates.map((g, i) => <path class:list={['poster__gate', i === 0 ? 'poster__gate--pass' : i === 1 ? 'poster__gate--fail' : '']} d={frame(g.x, 70)} />)}
+  <circle class="poster__token poster__token--fail" cx="24" cy="66" r="2.2"></circle>
+  <path class="poster__door poster__door--shut" d="M68 56v14h6v-14z"></path>
+  <g class="poster__text poster__text--alert">
+    <text x="78" y="64">ACCESS</text>
+    <text x="78" y="68">DENIED</text>
+  </g>
+</svg>

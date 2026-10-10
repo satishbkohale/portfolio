@@ -14,6 +14,7 @@ approach:
 tools:
   - Placeholder tool
 outcome: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+icon: shield-check
 order: 4
 draft: true
 todo:

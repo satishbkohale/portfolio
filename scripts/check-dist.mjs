@@ -15,6 +15,8 @@ const BUDGET = {
   homeHtmlGzip: 35 * 1024,
   cssGzip: 20 * 1024,
   initialJsGzip: 15 * 1024,
+  /** All JS including the lazily loaded 3D scenes (three.js is most of it). */
+  totalJsGzip: 175 * 1024,
   imageBytes: 200 * 1024,
 };
 
@@ -93,6 +95,16 @@ const homeScripts = [...home.toString().matchAll(/<script[^>]*src="([^"]+)"/g)].
 const jsGz = homeScripts.reduce((n, f) => n + gz(readFileSync(f)), 0);
 if (jsGz > BUDGET.initialJsGzip) errors.push(`Initial JS is ${kb(jsGz)} gzip (budget ${kb(BUDGET.initialJsGzip)})`);
 
+// All JS, lazy chunks included. Also refuse code that the CSP would block
+// anyway (no 'unsafe-eval'), so it fails here instead of in a visitor's browser.
+const jsFiles = files.filter((f) => f.endsWith('.js'));
+const totalJsGz = jsFiles.reduce((n, f) => n + gz(readFileSync(f)), 0);
+if (totalJsGz > BUDGET.totalJsGzip) errors.push(`All JS is ${kb(totalJsGz)} gzip (budget ${kb(BUDGET.totalJsGzip)})`);
+for (const f of jsFiles) {
+  const src = readFileSync(f, 'utf8');
+  if (/(?<![\w.$])eval\s*\(|new\s+Function\s*\(/.test(src)) errors.push(`${rel(f)}: uses eval or new Function (blocked by the CSP)`);
+}
+
 // 6. security.txt must not be close to expiry.
 const sec = readFileSync(join(DIST, '.well-known/security.txt'), 'utf8');
 const expires = sec.match(/^Expires: (.+)$/m)?.[1];
@@ -104,7 +116,7 @@ if (!/^Contact: /m.test(sec)) errors.push('security.txt has no Contact field');
 if (!files.some((f) => rel(f) === '_headers')) errors.push('dist/_headers missing');
 
 console.log(
-  `check-dist: ${htmlFiles.length} pages | home ${kb(homeGz)} gz | CSS ${kb(cssGz)} gz | initial JS ${kb(jsGz)} gz${production ? ' | production' : ''}`,
+  `check-dist: ${htmlFiles.length} pages | home ${kb(homeGz)} gz | CSS ${kb(cssGz)} gz | initial JS ${kb(jsGz)} gz | all JS ${kb(totalJsGz)} gz${production ? ' | production' : ''}`,
 );
 for (const w of warnings) console.warn(`  warn  ${w}`);
 for (const e of errors) console.error(`  ERROR ${e}`);

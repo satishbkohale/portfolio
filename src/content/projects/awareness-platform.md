@@ -24,6 +24,7 @@ tools:
 outcome: Campaign emails, notifications and logging run as automated workflows instead of manual steps.
 frameworks:
   - "ISO/IEC 27001:2022 Annex A 6.3: information security awareness, education and training"
+icon: mail
 featured: true
 order: 1
 todo:

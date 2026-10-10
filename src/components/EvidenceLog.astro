@@ -1,0 +1,100 @@
+---
+/**
+ * Certifications as an audit log, then skills grouped by how they were used.
+ * Rows stream in on scroll and each status light settles from amber to its
+ * final colour (scripts/home.ts adds the classes; CSS does the motion).
+ * Without JavaScript or with reduced motion, everything is shown as-is.
+ */
+import type { RoleId } from '../data/roles';
+import { type Proficiency, proficiencyLabel } from '../data/skills';
+import { type Certification, getCertifications, getSkillsWithEvidence } from '../lib/content';
+
+interface Props {
+  role?: RoleId | undefined;
+}
+const { role } = Astro.props;
+
+const statusRank = { earned: 0, 'in-progress': 1, planned: 2 } as const;
+const statusLabel = { earned: 'completed', 'in-progress': 'in progress', planned: 'planned' } as const;
+const roleRank = (c: Certification) => (role && c.data.roles.includes(role) ? 0 : 1);
+
+const certs = (await getCertifications()).sort(
+  (a, b) => roleRank(a) - roleRank(b) || statusRank[a.data.status] - statusRank[b.data.status] || a.data.order - b.data.order,
+);
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+/** "Oct 2026" -> "2026-10"; anything else is shown as written. */
+function logDate(date: string | null): string | null {
+  if (!date) return null;
+  const m = /^([A-Z][a-z]{2}) (\d{4})$/.exec(date);
+  const month = m ? MONTHS.indexOf(m[1] ?? '') : -1;
+  return m && month >= 0 ? `${m[2]}-${String(month + 1).padStart(2, '0')}` : date;
+}
+
+const skills = await getSkillsWithEvidence();
+const levels: { id: Proficiency; label: string }[] = [
+  { id: 'applied', label: 'Used in projects' },
+  { id: 'practised', label: 'Practised in labs' },
+  { id: 'studied', label: 'Studied' },
+];
+---
+
+<div class="log" data-reveal data-log>
+  <p class="log__bar" aria-hidden="true">
+    <span>evidence.log</span>
+    <span class="log__live">{certs.length} entries</span>
+  </p>
+  <div class="log__head" aria-hidden="true">
+    <span>ID</span><span>Type</span><span>Entry</span><span>Issuer</span><span>Status</span>
+  </div>
+  <ol class="log__list" data-reveal-group aria-label="Certifications">
+    {
+      certs.map((c) => {
+        const date = logDate(c.data.date);
+        return (
+          <li class="log__row" data-reveal data-status={c.data.status} id={`cert-${c.data.id.toLowerCase()}`}>
+            <span class="log__time" aria-hidden="true">
+              C-{c.data.id.slice(1).padStart(2, '0')}
+            </span>
+            <span class="log__type" aria-hidden="true">
+              CERT
+            </span>
+            <span class="log__entry">
+              {c.data.credentialUrl ? <a href={c.data.credentialUrl}>{c.data.name}</a> : c.data.name}
+              {c.data.draft && <span class="draft-badge">Placeholder</span>}
+            </span>
+            <span class="log__issuer">{[c.data.issuer, date].filter(Boolean).join(' · ')}</span>
+            <span class="log__status">
+              <span class="log__dot" aria-hidden="true" />
+              {statusLabel[c.data.status]}
+            </span>
+          </li>
+        );
+      })
+    }
+  </ol>
+</div>
+
+<div class="toolkit" data-reveal-group>
+  {
+    levels.map((level) => {
+      const items = skills.filter((s) => s.proficiency === level.id);
+      if (items.length === 0) return null;
+      return (
+        <div class="toolkit__row" data-level={level.id} data-reveal>
+          <h3 class="label" id={`toolkit-${level.id}`}>
+            {level.label}
+          </h3>
+          <ul class="toolkit__items" aria-labelledby={`toolkit-${level.id}`}>
+            {items.map((s) => (
+              <li>
+                {s.links[0] ? <a href={s.links[0].href}>{s.name}</a> : s.name}
+                <span class="visually-hidden"> ({proficiencyLabel[s.proficiency]})</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    })
+  }
+</div>
